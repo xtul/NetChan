@@ -1,0 +1,179 @@
+﻿$response: #eefaff;
+$response-b: darken($response, 11%);
+$response-r: darken($response, 16%);
+
+$greentext: #789922;
+
+$primary: #00ADEF;
+$primary-pale: lighten($primary, 38%);
+$green: #72ac2f;
+$red: #d00;
+
+$bg-top: #7ddcff;
+$bg-bot: #def6ff;
+
+.v-main__wrap {
+	background: linear-gradient(0deg, $bg-bot 90%, $bg-top 100%);
+}
+
+.v-card__title {
+	background: $primary;
+	padding: 0.5rem 16px 0.5rem 16px;
+	margin-bottom: 1rem;
+}
+
+h1, h2 {
+	text-align: center;
+}
+
+h3 {
+	margin: 40px 0 0;
+}
+
+ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+li {
+	display: inline-block;
+	margin: 0 10px;
+}
+
+.mb-5 {
+	height: 128px;
+}
+
+.logo {
+	height: 128px;
+}
+
+hr {
+	border: none;
+	border-top: 1px solid $primary-pale;
+	margin: 1rem;
+}
+
+p {
+	margin-bottom: 0;
+	display: block;
+}
+
+p.content {
+	font-size: 14px;
+}
+
+.op > .text > p.content {
+	min-height: 180px;
+}
+
+.op {
+	min-height: 150px
+}
+
+.response {
+	background-color: $response;
+	margin: 4px;
+	margin-left: 2rem;
+	display: table;
+	min-width: 25rem;
+	border-bottom: 1px solid $response-b;
+	border-right: 1px solid $response-r;
+}
+
+.response > p {
+	margin-right: 5rem;
+}
+
+.op, .response {
+	padding: 1rem;
+}
+
+.subject {
+	color: $green;
+	font-weight: 450;
+}
+
+.quote {
+	color: $greentext;
+}
+
+.name {
+	font-weight: 700;
+	color: $primary;
+}
+
+.img-p > p {
+	display: inline-block;
+}
+
+.img-p > img {
+	display: inline;
+	max-width: 250px;
+	max-height: 120px;
+	margin-right: 1rem;
+}
+
+.image > img {
+	float: left;
+	margin-right: 1rem;
+}
+
+p.heading {
+	min-width: 650px;
+}
+
+.actions {
+	font-size:12px;
+	vertical-align:text-top;
+}
+
+.postlink:hover {
+	color: red;
+}
+
+.id:hover {
+	color: red;
+}
+
+.reply {
+	text-decoration:underline;
+}
+
+.reply:hover {
+	text-decoration:none;
+}
+
+.reply, .board-link {
+	color: blue;
+}
+
+
+.reply:hover, board-link:hover {
+	color: red;
+}
+
+a {
+	text-decoration:none;
+}
+
+a:hover {
+	color:$red !important;
+}
+
+textarea {
+	font-size:14px;
+	line-height:1.3rem !important;
+}
+
+div.image:hover {
+	cursor:pointer;
+}
+
+.highlighted {
+	background-color: $response-b;
+}
+
+.notfound {
+	text-decoration:line-through;
+}
