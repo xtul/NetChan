@@ -1,9 +1,10 @@
 <template>
 	<v-row no-gutters>
+		<PostForm ref="postForm" />
 		<v-col cols="2" v-for="thread in boardData.threads" :key="thread.id" class="card">
 			<div class="op">
 				<div class="image">
-					<img :id="'img-' + thread.id" src="https://dummyimage.com/1000x1000/a3b5c4/000000.jpg&text=OP+pic">
+					<img :src="getThumbnailUri(thread.image)">
 				</div>
 				<div class="text">
 					<p class="heading">
@@ -14,18 +15,7 @@
 							{{ thread.subject }}:
 						</span>
 						<span>
-							<template v-for="line in cleanup(thread.content)">
-								<template v-if="line.startsWith('>')">
-									<span class="quote">{{line}}</span>
-								</template>
-								<template v-if="line.startsWith('>>')">
-									<span class="reply">{{line}}</span>
-								</template>
-								<template v-else>
-									{{line}}
-								</template>
-								<br>
-							</template>
+							{{cleanup(thread.content)[0]}}
 						</span>
 					</p>
 				</div>
@@ -53,6 +43,16 @@
 			},
 			cleanup: (str) => {
 				return str.replace(/(\r\n|\r|\n){2,}/g, '$1\n').split('\n');
+			},
+			getThumbnailUri: (uri) => {
+				if (uri == null) {
+					return '';
+				}
+
+				var splitUri = uri.split('.');
+				splitUri[splitUri.length - 2] = splitUri[splitUri.length - 2] + 's';
+
+				return splitUri.join('.');
 			}
 		}
 	};
@@ -79,5 +79,6 @@
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
+		width:100%;
 	}
 </style>

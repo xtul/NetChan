@@ -16,10 +16,9 @@
 					{{ prettyDate(post.postedOn) }}
 				</span>
 				<span class="postlink">
-					<router-link v-if="mode === 'op'" :to="{ name: 'thread', params: { threadId: post.id } }">No.</router-link>
-					<span v-else>No.</span>
+					<router-link :to="{ name: 'thread', params: { threadId: post.id }, hash: '#post-' + post.id }">No.</router-link>
 				</span>
-				<span class="id">
+				<span class="id" v-on:click="reply(post.id)">
 					{{ post.id }}
 				</span>
 				<span class="actions">
@@ -176,6 +175,17 @@
 
 				console.log('on this page');
 				this.scrollToPost(postId);
+			},
+			reply(postId) {
+				const postForm = this.$parent.$refs.postForm;
+				const postFormData = postForm.$data.form;
+
+				postForm.opened = true;
+				if (postFormData.content == '') {
+					postFormData.content += '>>' + postId + '\n';
+				} else {
+					postFormData.content += '\n>>' + postId;
+				}
 			}
 		}
 	};

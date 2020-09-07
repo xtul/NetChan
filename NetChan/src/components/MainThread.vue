@@ -1,10 +1,5 @@
 <template>
 	<v-container fluid no-gutters>
-		<div v-if="postingDrawerVisible === true" class="draggable-parent">
-			<vue-draggable-resizable :w="600" h="auto" class="draggable" :x="initialWidth()" :y="200" :z="99999" :parent="true">
-				<PostForm />
-			</vue-draggable-resizable>
-		</div>
 		<BoardHeader />
 		<v-layout column align-center>
 			<a href="/">
@@ -15,10 +10,6 @@
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ shortBoard }}/ - {{ boardName }}</h1>
-					<div class="create-post">
-						[<a v-if="postingDrawerVisible === false" v-on:click="postingDrawerVisible = true">Respond to this thread</a>
-						 <a v-else v-on:click="postingDrawerVisible = false">Close posting window</a>]
-					</div>
 					<hr />
 				</v-col>
 			</v-row>
@@ -55,7 +46,6 @@
 	import BoardPages from '@/components/BoardPages.vue';
 	import ThreadView from '@/components/ThreadView.vue';
 	import PostForm from '@/components/Forms/PostForm.vue';
-	import VueDraggableResizable from 'vue-draggable-resizable';
 	import router from '../router';
 	import axios from 'axios';
 
@@ -64,8 +54,7 @@
 		data() {
 			return {
 				boardName: 'none',
-				threadData: {},
-				postingDrawerVisible: false
+				threadData: {}
 			};
 		},
 		components: {
@@ -73,7 +62,6 @@
 			BoardPages,
 			ThreadView,
 			PostForm,
-			VueDraggableResizable
 		},
 		props: ['params'],
 		computed: {

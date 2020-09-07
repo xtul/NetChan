@@ -1,5 +1,6 @@
 <template>
 	<v-row>
+		<PostForm ref="postForm" />
 		<v-col cols="12" class="thread">
 			<div v-for="(post, index) in threadData.posts" :key="post.id">
 				<div v-if="index === 0" class="op" :id="'post-' + post.id">
@@ -15,6 +16,7 @@
 
 <script>
 	import Post from '@/components/Post/Post.vue';
+	import PostForm from '@/components/Forms/PostForm.vue';
 	import { postFinder } from '@/mixins/postFinder.ts';
 
 	export default {
@@ -22,7 +24,8 @@
 		props: ['threadData', 'board'],
 		mixins: [postFinder],
 		components: {
-			Post
+			Post,
+			PostForm
 		},
 		updated: async function () {
 			const replyLinks = document.getElementsByClassName('reply');

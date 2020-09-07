@@ -134,6 +134,7 @@ p.heading {
 
 .id:hover {
 	color: red;
+	cursor:pointer;
 }
 
 .reply {
@@ -176,4 +177,38 @@ div.image:hover {
 
 .notfound {
 	text-decoration:line-through;
+}
+
+.nav {
+	padding-left:1rem;
+}
+
+.create-post {
+	position: fixed;
+	padding:0.5rem;
+	background-color: #eefaff;
+	border-bottom: 1px solid #b0d9e8;
+	border-right: 1px solid #bce6f5;
+	top: 30px;
+	right: 15px;
+}
+
+.draggable-parent { /* dragging box, basically */
+	height: 100vh;
+	width: 100vw;
+	position: fixed;
+	pointer-events: none;
+}
+
+.draggable { /* actual component */
+	position: fixed;
+	pointer-events: all;
+	background-color: #fff;
+	z-index: 999;
+	padding: 0.4rem;
+	top: 30px;
+	right: 15px;
+	background-color: #eefaff;
+	border-bottom: 1px solid #b0d9e8;
+	border-right: 1px solid #bce6f5;
 }
