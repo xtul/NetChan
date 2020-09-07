@@ -24,8 +24,10 @@ NetChan uses Vue.js 2 as a display layer and Webpack as a server.
 - Captcha
 - ...
 
-# Running
+# Contributing
+
+Any code contribution or issue report is welcome.
 
 Running this project requires Node.js (built on version 12) and Vue CLI.
 
-Open `ClientApp` directory in the command line and run `npm run serve` to host a development server. You will also need to create a hardlink to the /wwwroot/img directory of [NetBoard](https://github.com/xtul/NetBoard) binary - in production, a load balancer such as Nginx should handle it.
+Open `NetChan` directory in the command line and run `npm run serve` to host a development server. You will also need to create a hardlink to the /wwwroot/img directory of [NetBoard](https://github.com/xtul/NetBoard) binary - in production, a load balancer such as Nginx should handle it.
