@@ -1,6 +1,6 @@
 ﻿# NetChan
 
-NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) project. As NetBoard, it is a work-in-progress and many things are subject to change.
+NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) project. It is different to NetBoard in that it is stylized - NetChan is a website that will be available once the project is good enough, whereas NetBoard is a generic API provider. Same as NetBoard, it is a work-in-progress and many things are subject to change.
 
 # Technology
 
