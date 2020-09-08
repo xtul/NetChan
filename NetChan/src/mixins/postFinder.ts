@@ -7,12 +7,10 @@ export const postFinder = {
 
 			const result = await axios
 				.get(url)
-				.then((r) => {
-					console.log(r);
+				.then(() => {
 					return true;
 				})
-				.catch((r) => {
-					console.log(r);
+				.catch(() => {
 					return false;
 				});
 
@@ -20,7 +18,7 @@ export const postFinder = {
 		},
 		findOpClass(array: DOMTokenList): boolean {
 			if (array.length !== 0) {
-				for (let x of array) {
+				for (const x of array) {
 					if (x === 'op') {
 						return true;
 					}
@@ -34,7 +32,6 @@ export const postFinder = {
 			if (postInQuestion == null) {
 				return false;
 			}
-			console.log(postInQuestion);
 			const op = this.findOpClass(postInQuestion.classList);
 			if (op == true) { // ie. is a thread
 				return true;
@@ -42,4 +39,4 @@ export const postFinder = {
 			return false;
 		}
 	}
-}
+};

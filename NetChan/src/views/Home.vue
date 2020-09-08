@@ -38,8 +38,8 @@
 
 <script lang="ts">
 	import { Component, Vue } from 'vue-property-decorator';
-	import FrontpageInfo from '@/components/FrontpageInfo.vue'; // @ is an alias to /src
-	import BoardList from '@/components/BoardList.vue';
+	import FrontpageInfo from '@/components/Details/FrontpageInfo.vue'; // @ is an alias to /src
+	import BoardList from '@/components/Details/BoardList.vue';
 
 	@Component({
 		components: {

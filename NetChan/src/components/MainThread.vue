@@ -20,8 +20,17 @@
 					</div>
 					<hr />
 				</v-col>
-				<v-col cols="12">
-					<ThreadView :threadData="threadData" :board="shortBoard"/>
+				<v-col cols="12" class="thread">
+					<!-- <ThreadView :threadData="threadData" :board="shortBoard"/> -->
+					<PostForm ref="postForm" />
+					<div v-for="(post, index) in threadData.posts" :key="post.id">
+						<div v-if="index === 0" class="op" :id="'post-' + post.id">
+							<Post :post="post" mode="op" :board="shortBoard" />
+						</div>
+						<div v-else class="response" :class="'thread-' + threadData.posts[0].id" :id="'post-' + post.id">
+							<Post :post="post" mode="response" :board="shortBoard" />
+						</div>
+					</div>
 				</v-col>
 			</v-row>
 		</v-container>
@@ -42,10 +51,10 @@
 </template>
 
 <script>
-	import BoardHeader from '@/components/BoardHeader.vue';
-	import BoardPages from '@/components/BoardPages.vue';
-	import ThreadView from '@/components/ThreadView.vue';
+	import BoardHeader from '@/components/Details/BoardHeader.vue';
+	import BoardPages from '@/components/Details/BoardPages.vue';
 	import PostForm from '@/components/Forms/PostForm.vue';
+	import { postFinder } from '@/mixins/postFinder.ts';
 	import router from '../router';
 	import axios from 'axios';
 
@@ -57,10 +66,10 @@
 				threadData: {}
 			};
 		},
+		mixins: [postFinder],
 		components: {
 			BoardHeader,
 			BoardPages,
-			ThreadView,
 			PostForm,
 		},
 		props: ['params'],
@@ -68,6 +77,26 @@
 			shortBoard: () => {
 				return router.currentRoute.fullPath.split('/')[1];
 			}
+		},
+		async updated() {
+			const replyLinks = document.getElementsByClassName('reply');
+
+			// remove links from nonexistent replies
+			if (replyLinks.length > 0) {
+				for (const x of replyLinks) {
+					const id = x.innerHTML.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
+					if (this.isOp(id) === true) {
+						x.innerHTML += ' (OP)';
+					}
+	
+					const exists = await this.postExists(id, this.shortBoard);
+					if (exists === false) {
+						x.classList.remove('reply');
+						x.classList.add('notfound');
+					}
+				}
+			}
+
 		},
 		methods: {
 			initialWidth: () => {
@@ -82,12 +111,15 @@
 					this.boardName = response.data;
 				})
 				.catch();
-			axios
-				.get('http://localhost:5934/api' + '/' + this.shortBoard + '/thread/' + this.params.threadId)
-				.then((response) => {
-					this.threadData = response.data;
-				})
-				.catch();
+			// if it does, get thread info
+			if (this.boardName !== 'none') {
+				axios
+					.get('http://localhost:5934/api' + '/' + this.shortBoard + '/thread/' + this.params.threadId)
+					.then((response) => {
+						this.threadData = response.data;
+					})
+					.catch();
+			}
 		}
 	};
 </script>

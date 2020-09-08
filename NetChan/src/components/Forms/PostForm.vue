@@ -115,11 +115,8 @@
 				}
 			};
 		},
-		mounted() {
-			console.log(this.$parent.$parent);
-		},
 		methods: {
-			uploadImage: async function() {
+			async uploadImage() {
 				const imageUploader = document.getElementById('imageUploader');
 				const formData = new FormData();
 
@@ -143,7 +140,7 @@
 					});
 				this.isLoading = false;
 			},
-			submitForm: function() {
+			submitForm() {
 				this.isPostingLoading = true;
 				let url = this.getAPIUrl() + this.board;
 				if (this.mode === 'post') {
@@ -151,10 +148,7 @@
 				}
 
 				axios.post(url, this.form)
-					.then(() => {
-					})
-					.catch(() => {
-					});
+					.catch();
 				this.isPostingLoading = false;
 
 				let threadData = this.$parent.$data.threadData;

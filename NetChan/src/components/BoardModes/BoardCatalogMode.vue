@@ -28,7 +28,7 @@
 	import moment from 'moment';
 
 	export default {
-		name: 'BoardCatalogView',
+		name: 'BoardCatalogMode',
 		props: ['boardData'],
 		computed: {
 			shortBoard: () => {
@@ -49,7 +49,7 @@
 					return '';
 				}
 
-				var splitUri = uri.split('.');
+				const splitUri = uri.split('.');
 				splitUri[splitUri.length - 2] = splitUri[splitUri.length - 2] + 's';
 
 				return splitUri.join('.');

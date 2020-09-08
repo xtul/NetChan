@@ -78,7 +78,7 @@
 					return '';
 				}
 
-				var splitUri = uri.split('.');
+				const splitUri = uri.split('.');
 				splitUri[splitUri.length - 2] = splitUri[splitUri.length - 2] + 's';
 
 				return splitUri.join('.');
@@ -117,7 +117,7 @@
 				const desiredPost = document.getElementById('post-' + id);
 
 				// clear all highlights
-				for (let x of highlighted) {
+				for (const x of highlighted) {
 					x.classList.remove('highlighted');
 				}
 
@@ -162,18 +162,14 @@
 
 				// ignore posts that weren't found (line-through links)
 				if (post.classList.contains('notfound') === true) {
-					console.log('notfound');
 					return;
 				}
 
 				// if it's equal to thread ID or post is in current page, scroll to it
 				if (postId == router.currentRoute.params.threadId) {
-					console.log('equal to threadid');
 					this.scrollToPost(postId);
 					return;
 				}
-
-				console.log('on this page');
 				this.scrollToPost(postId);
 			},
 			reply(postId) {
@@ -181,7 +177,7 @@
 				const postFormData = postForm.$data.form;
 
 				postForm.opened = true;
-				if (postFormData.content == '') {
+				if (postFormData.content === '') {
 					postFormData.content += '>>' + postId + '\n';
 				} else {
 					postFormData.content += '\n>>' + postId;

@@ -6,7 +6,7 @@
 				<img src="../assets/logo.png" class="logo" />
 			</a>
 		</v-layout>
-		<v-container no-gutters fluid v-if="boardName !== 'none'">
+		<v-container no-gutters fluid v-if="boardExists === true">
 			<v-row>
 				<v-col cols="12" v-if="mode === 'catalog' || mode === 'archive'">
 					<div class="nav">
@@ -15,10 +15,10 @@
 					<hr />
 				</v-col>
 				<v-col cols="12" v-if="mode === 'catalog'">
-					<BoardCatalogView :boardData="boardData" />
+					<BoardCatalogMode :boardData="boardData" />
 				</v-col>
 				<v-col cols="12" v-else>
-					<BoardDefaultView :boardData="boardData" />
+					<BoardDefaultMode :boardData="boardData" />
 				</v-col>
 			</v-row>
 		</v-container>
@@ -42,30 +42,23 @@
 </template>
 
 <script>
-	import BoardHeader from '@/components/BoardHeader.vue';
-	import BoardPages from '@/components/BoardPages.vue';
-	import BoardDefaultView from '@/components/BoardDefaultView.vue';
-	import BoardCatalogView from '@/components/BoardCatalogView.vue';
+	import BoardHeader from '@/components/Details/BoardHeader.vue';
+	import BoardPages from '@/components/Details/BoardPages.vue';
+	import BoardDefaultMode from '@/components/BoardModes/BoardDefaultMode.vue';
+	import BoardCatalogMode from '@/components/BoardModes/BoardCatalogMode.vue';
 	import router from '../router';
 	import axios from 'axios';
 	import moment from 'moment';
 
 	export default {
 		name: 'MainBoard',
-		data() {
-			return {
-				boardName: 'none',
-				boardData: {},
-				postingDrawerVisible: false
-			};
-		},
 		components: {
 			BoardHeader,
 			BoardPages,
-			BoardDefaultView,
-			BoardCatalogView
+			BoardDefaultMode,
+			BoardCatalogMode
 		},
-		props: ['params', 'catalog', 'archive'],
+		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
 		computed: {
 			shortBoard: () => {
 				return '/' + router.currentRoute.fullPath.split('/')[1] + '/';
@@ -78,29 +71,6 @@
 			initialWidth: () => {
 				return window.innerWidth - 600 - 100;
 			}
-		},
-		beforeMount() {
-			// make sure this board even exists
-			axios
-				.get('http://localhost:5934/api' + this.shortBoard)
-				.then((response) => {
-					this.boardName = response.data;
-				});
-		},
-		created() {
-			let page = this.params.page;
-			if (page === null || page === undefined) {
-				page = 1;
-			}
-			axios
-				.get('http://localhost:5934/api' + this.shortBoard + page)
-				.then((response) => {
-					if (response.status === 404) {
-						this.boardData = {};
-					} else {
-						this.boardData = response.data;
-					}
-				});
-		},
+		}
 	};
 </script>

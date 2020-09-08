@@ -22,24 +22,24 @@
 </template>
 
 <script>
-	import Post from '@/components/Post/Post.vue';
+	import Post from '@/components/Posts/Post.vue';
 	import PostForm from '@/components/Forms/PostForm.vue';
 	import { postFinder } from '@/mixins/postFinder.ts';
 
 	export default {
-		name: 'BoardDefaultView',
+		name: 'BoardDefaultMode',
 		props: ['boardData'],
 		mixins: [postFinder],
 		components: {
 			Post,
 			PostForm
 		},
-		mounted: async function () {
+		async mounted() {
 			const replyLinks = document.getElementsByClassName('reply');
 
 			// remove links to replies that don't exist
 			if (replyLinks.length > 0) {
-				for (let x of replyLinks) {
+				for (const x of replyLinks) {
 					const id = x.innerHTML.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
 					if (this.isOp(id) === true) {
 						x.innerHTML += ' (OP)';
