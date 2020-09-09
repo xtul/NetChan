@@ -5,13 +5,13 @@
 			<h1>{{ shortBoard }} - {{ boardName }}</h1>
 			<hr />
 		</v-col>
-		<v-col cols="12" class="thread">
+		<v-col cols="12">
 			<div v-for="thread in boardData.threads" :key="thread.id" class="thread">
-				<div class="op" :id="'post-' + thread.id" v-bind:class="{ emptyThread: thread.responses !== null }">
+				<div class="op" :class="'thread-' + thread.id" :id="'post-' + thread.id" v-bind:class="{ emptyThread: thread.responses !== null }">
 					<Post :post="thread" mode="op" :board="boardData.pageData.board"/>
 				</div>
 				<template v-if="thread.responses !== null">
-					<div v-for="response in thread.responses" :key="response.id" class="response" :id="'post-' + response.id">
+					<div v-for="response in thread.responses" :key="response.id" class="response" :class="'thread-' + thread.id" :id="'post-' + response.id">
 						<Post :post="response" mode="response" :board="boardData.pageData.board"/>
 					</div>
 				</template>
@@ -28,7 +28,7 @@
 
 	export default {
 		name: 'BoardDefaultMode',
-		props: ['boardData'],
+		props: ['boardData', 'boardName', 'shortBoard'],
 		mixins: [postFinder],
 		components: {
 			Post,

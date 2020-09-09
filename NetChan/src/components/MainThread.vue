@@ -6,7 +6,7 @@
 				<img src="../assets/logo.png" class="logo" />
 			</a>
 		</v-layout>
-		<v-container no-gutters fluid v-if="boardName !== 'none' || threadId !== 0">
+		<v-container no-gutters fluid v-if="boardName !== 'none' || params.threadId !== 0">
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ shortBoard }}/ - {{ boardName }}</h1>
@@ -54,6 +54,7 @@
 	import BoardHeader from '@/components/Details/BoardHeader.vue';
 	import BoardPages from '@/components/Details/BoardPages.vue';
 	import PostForm from '@/components/Forms/PostForm.vue';
+	import Post from '@/components/Posts/Post.vue';
 	import { postFinder } from '@/mixins/postFinder.ts';
 	import router from '../router';
 	import axios from 'axios';
@@ -62,7 +63,6 @@
 		name: 'MainThread',
 		data() {
 			return {
-				boardName: 'none',
 				threadData: {}
 			};
 		},
@@ -71,8 +71,9 @@
 			BoardHeader,
 			BoardPages,
 			PostForm,
+			Post
 		},
-		props: ['params'],
+		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
 		computed: {
 			shortBoard: () => {
 				return router.currentRoute.fullPath.split('/')[1];
@@ -103,17 +104,10 @@
 				return window.innerWidth - 600 - 100;
 			}
 		},
-		beforeMount() {
-			// make sure this board/thread even exists
-			axios
-				.get('http://localhost:5934/api/' + this.shortBoard)
-				.then((response) => {
-					this.boardName = response.data;
-				})
-				.catch();
-			// if it does, get thread info
+		async beforeMount() {
+			// get thread info
 			if (this.boardName !== 'none') {
-				axios
+				await axios
 					.get('http://localhost:5934/api' + '/' + this.shortBoard + '/thread/' + this.params.threadId)
 					.then((response) => {
 						this.threadData = response.data;

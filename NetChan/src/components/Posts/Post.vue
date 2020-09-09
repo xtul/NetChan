@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<div class="image">
-			<img v-if="post.spoilerImage === true" v-on:click="openImage" :id="'img-' + post.id" src="/img/spoiler.gif">
-			<img v-else :id="'img-' + post.id" v-on:click="openImage" :src="getThumbnailUri(post.image)">
+		<div class="image" v-if="post.image != null">
+			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-if="post.spoilerImage === true" v-on:click="openImage(post.image)" :id="'img-' + post.id" src="/img/spoiler.gif">
+			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-else :id="'img-' + post.id" v-on:click="openImage" :src="getThumbnailUri(post.image)">
 		</div>
 		<div class="text">
 			<p class="heading">
@@ -16,7 +16,8 @@
 					{{ prettyDate(post.postedOn) }}
 				</span>
 				<span class="postlink">
-					<router-link :to="{ name: 'thread', params: { threadId: post.id }, hash: '#post-' + post.id }">No.</router-link>
+					<router-link v-if="post.thread" :to="{ name: 'thread', params: { threadId: post.thread }, hash: '#post-' + post.id }">No.</router-link>
+					<router-link v-else :to="{ name: 'thread', params: { threadId: post.id } }">No.</router-link>
 				</span>
 				<span class="id" v-on:click="reply(post.id)">
 					{{ post.id }}
@@ -83,19 +84,42 @@
 
 				return splitUri.join('.');
 			},
-			openImage: (event) => {
+			openImage: (event, spoilerUrl) => {
 				const img = event.target;
-				const srcSplit = img.src.split('.');
-
-				const beforeExt = srcSplit[srcSplit.length - 2];
-
-				if (beforeExt.charAt(beforeExt.length - 1) !== 's') {
-					srcSplit[srcSplit.length - 2] += 's';
-				} else {
-					srcSplit[srcSplit.length - 2] = beforeExt.substring(0, beforeExt.length - 1);
+				if (img.src.includes('img/notfound.png')) {
+					return;
 				}
 
-				img.src = srcSplit.join('.');
+				// if image isn't a spoiler, add or remove 's' (signifies a thumbnail)
+				if (spoilerUrl == undefined) {
+					// split the filename into an array delimited by a dot
+					const srcSplit = img.src.split('.');
+
+					// since filename may contain dots anywhere, we're looking for the part just before extension
+					const beforeExt = srcSplit[srcSplit.length - 2];
+
+					// if 's' wasn't found at the end of filename, add it
+					if (beforeExt.charAt(beforeExt.length - 1) !== 's') {
+						srcSplit[srcSplit.length - 2] += 's';
+					// otherwise remove it
+					} else {
+						srcSplit[srcSplit.length - 2] = beforeExt.substring(0, beforeExt.length - 1);
+					}
+
+					// finally, join the array into a single string and change image source
+					img.src = srcSplit.join('.');
+				
+				// otherwise just set the url to the one provided
+				} else {
+					if (img.src === spoilerUrl) {
+						img.src = '/img/spoiler.gif';
+					} else {
+						img.src = spoilerUrl;
+					}
+				}
+
+				// stretch the image so everything appears on the bottom rather on the right
+				img.classList.toggle('stretched-img');
 			},
 			regexReply: (line) => {
 				// split the string by elements like ">>131", ">>235" and return the array

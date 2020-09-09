@@ -29,7 +29,7 @@
 
 	export default {
 		name: 'BoardCatalogMode',
-		props: ['boardData'],
+		props: ['boardData', 'boardName', 'shortBoard'],
 		computed: {
 			shortBoard: () => {
 				return '/' + router.currentRoute.fullPath.split('/')[1] + '/';

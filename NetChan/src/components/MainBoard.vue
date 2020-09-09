@@ -9,33 +9,21 @@
 		<v-container no-gutters fluid v-if="boardExists === true">
 			<v-row>
 				<v-col cols="12" v-if="mode === 'catalog' || mode === 'archive'">
-					<div class="nav">
+					<div v-if="boardData.pageData" class="nav">
 						[<a :href="'/' + boardData.pageData.board">Return</a>]
 					</div>
 					<hr />
 				</v-col>
 				<v-col cols="12" v-if="mode === 'catalog'">
-					<BoardCatalogMode :boardData="boardData" />
+					<BoardCatalogMode :boardData="boardData" :boardName="boardName" :shortBoard="shortBoard" />
 				</v-col>
 				<v-col cols="12" v-else>
-					<BoardDefaultMode :boardData="boardData" />
-				</v-col>
-			</v-row>
-		</v-container>
-		<v-container v-else column align-center>
-			<v-row>
-				<v-col cols="12">
-					<v-card class="rounded-0">
-						<v-card-title>404.</v-card-title>
-						<v-card-text>
-							<p>Board doesn't exist.</p>
-						</v-card-text>
-					</v-card>
+					<BoardDefaultMode :boardData="boardData" :boardName="boardName" :shortBoard="shortBoard" />
 				</v-col>
 			</v-row>
 		</v-container>
 		<template v-if="mode !== 'catalog' && mode !== 'archive'">
-			<BoardPages :pageCount="boardData.pageData.pageCount" :currentPage="boardData.pageData.currentPage" :currentBoard="params.board" />
+			<BoardPages v-if="boardData.pageData" :pageCount="boardData.pageData.pageCount" :currentPage="boardData.pageData.currentPage" :currentBoard="params.board" />
 		</template>
 		<BoardHeader />
 	</v-container>

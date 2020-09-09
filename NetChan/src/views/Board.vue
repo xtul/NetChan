@@ -1,10 +1,17 @@
 <template>
-	<MainBoard 
-		:params="this.$route.params" 
-		:boardName="boardName"
-		:boardExists="boardExists"
-		:boardData="boardData"
-	/>
+	<div v-if="loading === false">
+		<MainBoard 
+			v-if="boardExists"
+			:params="this.$route.params" 
+			:boardName="boardName"
+			:boardExists="boardExists"
+			:boardData="boardData"
+		/>
+		<NotFound v-else :message="errorMsg"/>
+	</div>
+	<div v-else>
+		<p>loading...</p>
+	</div>
 </template>
 
 <script lang="ts">
@@ -12,10 +19,12 @@
 	import router from '../router';
 	import axios from 'axios';
 	import MainBoard from '@/components/MainBoard.vue';
+	import NotFound from '@/components/Details/NotFound.vue';
 
 	@Component({
 		components: {
-			MainBoard
+			MainBoard,
+			NotFound
 		},
 	})
 	export default class Board extends Vue {
@@ -23,19 +32,28 @@
 			return {
 				boardName: 'none',
 				boardExists: false,
-				boardData: {}
+				errorMsg: '',
+				boardData: {},
+				loading: true
 			};
 		}
 		private async beforeCreate() {
 			// make sure this board even exists, also get full board name
 			const board = '/' + router.currentRoute.fullPath.split('/')[1] + '/';
-			await axios
-				.get('http://localhost:5934/api' + board)
-				.then((response) => {
-					this.boardName = response.data;
-					this.boardExists = true;
-				})
-				.catch();
+			try {
+				await axios
+					.get('http://localhost:5934/api' + board)
+					.then((response) => {
+						this.boardName = response.data;
+						this.boardExists = true;
+					})
+					.catch((error) => {
+						console.log(error);
+						this.errorMsg = error;
+					});
+			} catch {}
+
+			this.loading = false;
 
 			// if board exists, get threads
 			if (this.boardExists === false) {
