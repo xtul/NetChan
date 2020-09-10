@@ -1,18 +1,23 @@
 <template>
-	<v-snackbar
-		v-model="opened"
-		:top="true"
-    	:right="true"
-    	:multi-line="true"
-    	:timeout="-1"
-		:light="true">
+	<v-card
+		v-if="opened"
+    	height="400"
+    	class="overflow-hidden"
+    >
+	<v-navigation-drawer
+		:v-model="opened"
+        :right="true"
+        :permanent="true"
+        absolute
+        dark
+	>
 		<v-form>
-			<v-container fluid :disabled="isPostingLoading">
+			<v-container style="padding:0;" fluid :disabled="isPostingLoading">
 				<v-row dense>
 					<v-col cols="12">
-						<v-spacer></v-spacer>
-						<span v-on:click="opened = false">X</span>
+						<span class="close" v-on:click="opened = false">X</span>
 					</v-col>
+
 					<v-col v-if="errorMessage !== ''" cols="12">
 						<p class="error">{{ errorMessage }}</p>
 					</v-col>
@@ -29,7 +34,7 @@
 									label="Options" dense></v-text-field>
 					</v-col>
 
-					<v-col cols="12">
+					<v-col v-if="mode === 'thread'" cols="12">
 						<v-text-field :counter="64"
 									placeholder="<empty>"
 									v-model="form.subject"
@@ -59,10 +64,15 @@
 						<v-btn v-if="mode === 'thread'" :disabled="!canCreatePost" depressed tile block height="100%" v-on:click="submitForm" id="submitBtn">Create {{mode}}</v-btn>
 						<v-btn v-else :loading="isLoading" :disabled="isLoading" depressed tile block height="100%" v-on:click="submitForm" id="submitBtn">Create {{mode}}</v-btn>
 					</v-col>
+
+					<v-col cols="12">
+						<v-checkbox v-model="form.spoilerImage" label="Spoiler"></v-checkbox>
+					</v-col>
 				</v-row>
 			</v-container>
 		</v-form>
-	</v-snackbar>
+	</v-navigation-drawer>
+	</v-card>
 </template>
 
 <script>
@@ -111,7 +121,8 @@
 					options: '',
 					subject: '',
 					content: '',
-					image: ''
+					image: '',
+					spoilerImage: false
 				}
 			};
 		},

@@ -104,7 +104,7 @@ p.content {
 }
 
 .stretched-img {
-	padding-right: 100%;
+	margin-right: 100vw !important;
 	padding-bottom: 15px;
 }
 
@@ -172,8 +172,17 @@ textarea {
 	line-height:1.3rem !important;
 }
 
-div.image:hover {
+figure.image:hover, .close {
 	cursor:pointer;
+}
+
+figure.image {
+	vertical-align: top;
+    display: inline-block;
+}
+
+figcaption {
+	display: block;
 }
 
 .highlighted {
@@ -216,4 +225,18 @@ div.image:hover {
 	background-color: #eefaff;
 	border-bottom: 1px solid #b0d9e8;
 	border-right: 1px solid #bce6f5;
+}
+
+.small {
+	font-size:9pt;
+	color:gray;
+}
+
+.text {
+	display:inline-block;
+}
+
+.filename {
+	font-size:10pt;
+	margin:0 !important;
 }

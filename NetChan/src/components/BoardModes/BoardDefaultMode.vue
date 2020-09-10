@@ -2,10 +2,6 @@
 	<v-row>
 		<PostForm ref="postForm" />
 		<v-col cols="12">
-			<h1>{{ shortBoard }} - {{ boardName }}</h1>
-			<hr />
-		</v-col>
-		<v-col cols="12">
 			<div v-for="thread in boardData.threads" :key="thread.id" class="thread">
 				<div class="op" :class="'thread-' + thread.id" :id="'post-' + thread.id" v-bind:class="{ emptyThread: thread.responses !== null }">
 					<Post :post="thread" mode="op" :board="boardData.pageData.board"/>

@@ -1,12 +1,17 @@
 <template>
 	<div>
-		<div class="image" v-if="post.image != null">
-			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-if="post.spoilerImage === true" v-on:click="openImage(post.image)" :id="'img-' + post.id" src="/img/spoiler.gif">
-			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-else :id="'img-' + post.id" v-on:click="openImage" :src="getThumbnailUri(post.image)">
+		<div v-if="post.image != null">
+			<a v-if="mode === 'op' && hidden === false" class="filename" v-on:click="hideThread(post.thread)">[x]&nbsp;</a>
+			<a v-if="mode === 'op' && hidden === true" class="filename" v-on:click="hideThread(post.thread)">[+]&nbsp;</a>
+			<a class="filename" target="_blank" rel="noopener noreferrer" :href="post.image">{{ getFilename(post.image) | truncate(32) }}</a>
 		</div>
+		<figure class="image" v-if="post.image != null">
+			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-if="post.spoilerImage === true" v-on:click="function(e){openImage(e, post.image)}" :id="'img-' + post.id" src="/img/spoiler.png">
+			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-else :id="'img-' + post.id" v-on:click="openImage" :src="getThumbnailUri(post.image)">
+		</figure>
 		<div class="text">
 			<p class="heading">
-				<span class="subject">
+				<span v-if="post.thread == null" class="subject">
 					{{ post.subject }}
 				</span>
 				<span class="name">
@@ -33,7 +38,7 @@
 					</template>
 					<template v-else-if="line.includes('>>')">
 						<span v-for="x in regexReply(line)">
-							<a v-if="x.startsWith('>>')" class="reply" v-on:click="navigateToPost(x)">{{x}}</a>
+							<a v-if="x.startsWith('>>')" class="reply" v-on:mouseleave="linkLeave(x)" v-on:mouseover="linkHover(x)" v-on:click="navigateToPost(x)">{{x}}</a>
 							<span v-else>
 								{{x}}
 							</span>
@@ -62,6 +67,27 @@
 		name: 'Post',
 		props: ['post', 'mode', 'board'],
 		mixins: [postFinder],
+		data() {
+			return {
+				hidden: false
+			};
+		},
+        filters: {
+        	truncate: function (text, length) {
+				const textSplit = text.split('.');
+				const fileName = textSplit.splice(0, textSplit.length - 1).join('.');
+				const ext = '.' + textSplit[textSplit.length - 1];
+				// shorten only the last 
+				var shortenedText = fileName.substring(0, length);
+				if (shortenedText.length !== text.length) {
+					shortenedText += '(...)';
+				}
+
+				shortenedText += ext;
+
+				return shortenedText;
+        	}
+    	},
 		methods: {
 			prettyDate: (date) => {
 				const providedDate = moment.utc(date);
@@ -111,8 +137,9 @@
 				
 				// otherwise just set the url to the one provided
 				} else {
-					if (img.src === spoilerUrl) {
-						img.src = '/img/spoiler.gif';
+					let cleanImgSrc = img.src.replace(window.location.origin, '').replaceAll('/', '\\');
+					if (cleanImgSrc === spoilerUrl) {
+						img.src = '/img/spoiler.png';
 					} else {
 						img.src = spoilerUrl;
 					}
@@ -135,15 +162,42 @@
 					rect.right <= (window.innerWidth || document.documentElement.clientWidth)
 				);
 			},
+			removeHighlights(id = 0) {
+				if (id === 0) {
+					const highlighted = document.getElementsByClassName('highlighted');
+					for (const x of highlighted) {
+						x.classList.remove('highlighted');
+					}
+				} else {
+					const post = document.getElementById('post-' + id);
+					post.classList.remove('highlighted');
+				}
+			},
+			linkHover(id) {
+				id = id.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
+				this.removeHighlights(id);
+				const desiredPost = document.getElementById('post-' + id);
+
+				if (desiredPost == null) {
+					return; // it's probably external link
+				}
+
+				if (this.isInViewport(desiredPost) && desiredPost.classList.contains('op') === false) {
+					desiredPost.classList.add('highlighted');
+				} else {
+					// display preview...
+				}
+			},
+			linkLeave(id) {
+				id = id.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
+				this.removeHighlights(id);
+			},
 			scrollToPost(id) {
 				id = id.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
-				const highlighted = document.getElementsByClassName('highlighted');
 				const desiredPost = document.getElementById('post-' + id);
 
 				// clear all highlights
-				for (const x of highlighted) {
-					x.classList.remove('highlighted');
-				}
+				this.removeHighlights();
 
 				// highlight this post
 				if (desiredPost.classList.contains('op') === false) {
@@ -156,7 +210,8 @@
 				}
 
 				// add hash at the end of link
-				window.location.hash = '#post-' + id;
+				// window.location.hash = '#post-' + id;
+				router.push({ hash: '#post-' + id });
 			},
 			async lookupThread(postId) {
 				const result = await axios
@@ -170,7 +225,7 @@
 
 				return result;
 			},
-			async navigateToPost(postId) {
+			async navigateToPost(postId,) {
 				postId = postId.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
 				const post = document.getElementById('post-' + postId);
 
@@ -195,6 +250,10 @@
 					return;
 				}
 				this.scrollToPost(postId);
+			},
+			getFilename(path) {
+				const pathSplit = path.split('\\');
+				return pathSplit[pathSplit.length - 1]
 			},
 			reply(postId) {
 				const postForm = this.$parent.$refs.postForm;
