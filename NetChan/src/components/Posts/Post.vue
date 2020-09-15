@@ -1,11 +1,22 @@
 <template>
-	<div>
-		<div v-if="post.image != null">
-			<a v-if="mode === 'op' && hidden === false" class="filename" v-on:click="hideThread(post.thread)">[x]&nbsp;</a>
-			<a v-if="mode === 'op' && hidden === true" class="filename" v-on:click="hideThread(post.thread)">[+]&nbsp;</a>
-			<a class="filename" target="_blank" rel="noopener noreferrer" :href="post.image">{{ getFilename(post.image) | truncate(32) }}</a>
+	<div :id="''">
+		<div class="filename">
+			<template v-if="post.image != null">
+				<template>
+					<a v-if="mode === 'op' && hidden === false" class="filename" v-on:click="hideThread(post.id)">[x]&nbsp;</a>
+					<a v-if="mode === 'op' && hidden === true" class="filename" v-on:click="hideThread(post.id)">[+]&nbsp;</a>
+				</template>
+				<a v-if="hidden === false" target="_blank" rel="noopener noreferrer" :href="post.image">{{ getFilename(post.image) | truncate(32) }}</a>
+			</template>
+			<template v-if="hidden === false && replies.length > 0">
+				<template v-if="post.image != null"> | </template>
+				<span v-for="(x, index) in replies" :key="x">
+					<a v-on:mouseleave="linkLeave(x.toString())" v-on:mouseover="linkHover(x.toString())" v-on:click="navigateToPost(x.toString())">>>{{x}}</a>
+					<template v-if="index < replies.length - 1">, </template>
+				</span>
+			</template>
 		</div>
-		<figure class="image" v-if="post.image != null">
+		<figure class="image" v-if="post.image != null && hidden === false">
 			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-if="post.spoilerImage === true" v-on:click="function(e){openImage(e, post.image)}" :id="'img-' + post.id" src="/img/spoiler.png">
 			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-else :id="'img-' + post.id" v-on:click="openImage" :src="getThumbnailUri(post.image)">
 		</figure>
@@ -65,11 +76,12 @@
 
 	export default {
 		name: 'Post',
-		props: ['post', 'mode', 'board'],
+		props: ['post', 'mode', 'board', 'isThreadPreview'],
 		mixins: [postFinder],
 		data() {
 			return {
-				hidden: false
+				hidden: false,
+				replies: []
 			};
 		},
         filters: {
@@ -148,9 +160,29 @@
 				// stretch the image so everything appears on the bottom rather on the right
 				img.classList.toggle('stretched-img');
 			},
-			regexReply: (line) => {
+			addReplies(id, responderId) {
+				const post = this.$parent.$refs['post-' + id];
+				// ignore posts outside view
+				if (post == undefined) {
+					return;
+				}
+
+				// ignore duplicates
+				if (post[0].replies.includes(responderId)) {
+					return
+				}
+
+				post[0].replies.push(responderId);
+			},
+			regexReply(line) {
 				// split the string by elements like ">>131", ">>235" and return the array
 				const result = line.replace(/(>>\d+)/g, '<split>$1').replace(/(>>\d+)/g, '$1<split>').split(/<split>/);
+
+				// add this reply to the post in question ('replies' data member)
+				const postInQuestion = result.find(x => x.startsWith('>>'));
+				this.addReplies(postInQuestion.replace('>>', ''), this.post.id);
+
+				// return an array 
 				return result;
 			},
 			isInViewport: (element) => {
@@ -170,7 +202,9 @@
 					}
 				} else {
 					const post = document.getElementById('post-' + id);
-					post.classList.remove('highlighted');
+					if (post != null) {
+						post.classList.remove('highlighted');
+					}
 				}
 			},
 			linkHover(id) {
@@ -226,7 +260,7 @@
 				return result;
 			},
 			async navigateToPost(postId,) {
-				postId = postId.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
+				postId = postId.replaceAll('>', '').replaceAll('&gt;', '').replaceAll(' (OP)', '');
 				const post = document.getElementById('post-' + postId);
 
 				// if post is not present on this page move to it's thread
@@ -264,6 +298,48 @@
 					postFormData.content += '>>' + postId + '\n';
 				} else {
 					postFormData.content += '\n>>' + postId;
+				}
+			},
+			hideThread(threadId, autoHide = false) {
+				const thread = this.$parent.$refs['thread-'+threadId];
+				const overlay = this.$parent.$refs['overlay-'+threadId];
+				if (thread === undefined || overlay === undefined) {
+					return;
+				}
+
+				// compress thread to ~100px and display an overlay
+				thread[0].classList.toggle('hidden');
+				if (overlay[0].style.gridArea === '1 / 1') {
+					overlay[0].style.gridArea = null;
+				} else {
+					overlay[0].style.gridArea = '1 / 1';
+				}
+
+				this.hidden = !this.hidden;
+
+				// remember hidden threads between visits
+				var hiddenList = JSON.parse(localStorage.getItem('hiddenThreads'));
+
+				// if thread wasn't hidden automatically, ignore localStorage
+				if (autoHide) {
+					return;
+				}
+
+				// if the list is present
+				if (hiddenList != null) {
+					// if this thread is already present on the list, remove it
+					if (hiddenList.includes(threadId)) {
+						hiddenList = hiddenList.filter(x => x !== threadId);
+						localStorage.setItem('hiddenThreads', JSON.stringify(hiddenList));
+						return;
+					}
+					// otherwise just add it
+					hiddenList.push(threadId);
+					localStorage.setItem('hiddenThreads', JSON.stringify(hiddenList));
+				// otherwise create new list
+				} else {
+					const newList = [threadId]
+					localStorage.setItem('hiddenThreads', JSON.stringify(newList));
 				}
 			}
 		}

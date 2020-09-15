@@ -9,14 +9,14 @@
 		<v-container no-gutters fluid v-if="boardName !== 'none' || params.threadId !== 0">
 			<v-row>
 				<v-col cols="12">
-					<h1>/{{ shortBoard }}/ - {{ boardName }}</h1>
+					<h1>/{{ params.board }}/ - {{ boardName }}</h1>
 					<hr />
 				</v-col>
 			</v-row>
 			<v-row>
 				<v-col cols="12">
 					<div class="nav">
-						[<router-link :to="{ name: 'board', params: { board: shortBoard }}">Return</router-link>]
+						[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]
 					</div>
 					<hr />
 				</v-col>
@@ -25,10 +25,10 @@
 					<PostForm ref="postForm" />
 					<div v-for="(post, index) in threadData.posts" :key="post.id">
 						<div v-if="index === 0" class="op" :id="'post-' + post.id">
-							<Post :post="post" mode="op" :board="shortBoard" />
+							<Post :ref="'post-' + post.id" :post="post" mode="op" :board="params.board" :isThreadPreview="true" />
 						</div>
 						<div v-else class="response" :class="'thread-' + threadData.posts[0].id" :id="'post-' + post.id">
-							<Post :post="post" mode="response" :board="shortBoard" />
+							<Post :ref="'post-' + post.id" :post="post" mode="response" :board="params.board" :isThreadPreview="true" />
 						</div>
 					</div>
 				</v-col>
@@ -74,23 +74,18 @@
 			Post
 		},
 		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
-		computed: {
-			shortBoard: () => {
-				return router.currentRoute.fullPath.split('/')[1];
-			}
-		},
 		async updated() {
 			const replyLinks = document.getElementsByClassName('reply');
 
 			// remove links from nonexistent replies
 			if (replyLinks.length > 0) {
 				for (const x of replyLinks) {
-					const id = x.innerHTML.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
-					if (this.isOp(id) === true) {
+					const id = x.innerHTML.replaceAll('>', '').replaceAll('&gt;', '').replaceAll(' (OP)', '');
+					if (this.isOp(id) === true && !x.innerHTML.includes(' (OP)')) {
 						x.innerHTML += ' (OP)';
 					}
 	
-					const exists = await this.postExists(id, this.shortBoard);
+					const exists = await this.postExists(id, this.params.board);
 					if (exists === false) {
 						x.classList.remove('reply');
 						x.classList.add('notfound');
@@ -108,7 +103,7 @@
 			// get thread info
 			if (this.boardName !== 'none') {
 				await axios
-					.get('http://localhost:5934/api' + '/' + this.shortBoard + '/thread/' + this.params.threadId)
+					.get('http://localhost:5934/api' + '/' + this.params.board + '/thread/' + this.params.threadId)
 					.then((response) => {
 						this.threadData = response.data;
 					})

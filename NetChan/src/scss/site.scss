@@ -240,3 +240,23 @@ figcaption {
 	font-size:10pt;
 	margin:0 !important;
 }
+
+.thread {
+	display:grid;
+}
+
+.hidden {
+	height: 90px;
+	overflow: hidden;
+}
+
+.hiddenOverlay {
+	z-index:10;
+	pointer-events: none;
+	background: $bg-bot;
+	background: linear-gradient(0deg, $bg-bot 15%, rgba(255,255,255,0) 85%);
+}
+
+.postContent {
+	grid-area: 1 / 1;
+}

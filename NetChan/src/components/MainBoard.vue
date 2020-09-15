@@ -9,22 +9,27 @@
 		<v-container no-gutters fluid v-if="boardExists === true">
 			<v-row>
 				<v-col cols="12">
-					<h1>{{ shortBoard }} - {{ boardName }}</h1>
+					<h1>/{{ this.params.board }}/ - {{ boardName }}</h1>
 					<hr />
 				</v-col>
-				<v-col cols="12" v-if="mode === 'catalog' || mode === 'archive'">
-					<div v-if="boardData.pageData" class="nav">
-						[<a :href="'/' + boardData.pageData.board">Return</a>]
-					</div>
-				</v-col>
+				<template v-if="mode === 'catalog' || mode === 'archive'">
+					<v-col cols="12">
+						<div v-if="boardData.pageData" class="nav">
+							[<a :href="'/' + boardData.pageData.board">Return</a>]
+						</div>
+					</v-col>
+				</template>
 				<template v-else>
 					<BoardPages v-if="boardData.pageData" :pageCount="boardData.pageData.pageCount" :currentPage="boardData.pageData.currentPage" :currentBoard="params.board" />
 				</template>
+				<v-col cols="12">
+					<hr style="margin:0;" />
+				</v-col>
 				<v-col cols="12" v-if="mode === 'catalog'">
-					<BoardCatalogMode :boardData="boardData" :boardName="boardName" :shortBoard="shortBoard" />
+					<BoardCatalogMode :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
 				</v-col>
 				<v-col cols="12" v-else>
-					<BoardDefaultMode :boardData="boardData" :boardName="boardName" :shortBoard="shortBoard" />
+					<BoardDefaultMode :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
 				</v-col>
 			</v-row>
 		</v-container>
@@ -54,9 +59,6 @@
 		},
 		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
 		computed: {
-			shortBoard: () => {
-				return '/' + router.currentRoute.fullPath.split('/')[1] + '/';
-			},
 			mode: () => {
 				return router.currentRoute.fullPath.split('/')[2];
 			}

@@ -2,9 +2,9 @@
 	<v-row no-gutters>
 		<PostForm ref="postForm" />
 		<v-col cols="2" v-for="thread in boardData.threads" :key="thread.id" class="card">
-			<div class="op">
+			<div :ref="'post-' + thread.id" class="op">
 				<div class="image">
-					<img :src="getThumbnailUri(thread.image)">
+					<img :src="getThumbnailUri(thread.image)" width="125px">
 				</div>
 				<div class="text">
 					<p class="heading">
@@ -29,18 +29,21 @@
 
 	export default {
 		name: 'BoardCatalogMode',
-		props: ['boardData', 'boardName', 'shortBoard'],
-		computed: {
-			shortBoard: () => {
-				return '/' + router.currentRoute.fullPath.split('/')[1] + '/';
-			},
+		props: ['boardData'],
+		beforeMount() {
+			this.$nextTick(() => {
+      			// hide all threads that are in localStorage
+				const hiddenList = JSON.parse(localStorage.getItem('hiddenThreads'));
+				for (const key of hiddenList) {
+					const post = this.$refs['post-' + key];
+					if (post == null) {
+						return;
+					}
+					this.$refs['post-' + key][0].hideThread(key, true);
+				}
+    		});			
 		},
 		methods: {
-			prettyDate: (date) => {
-				const providedDate = moment.utc(date);
-				const formattedDate = moment(providedDate).local();
-				return formattedDate.format('D/M/YYYY (ddd) HH:mm:ss') + ' (' + moment(formattedDate).fromNow() + ')';
-			},
 			cleanup: (str) => {
 				return str.replace(/(\r\n|\r|\n){2,}/g, '$1\n').split('\n');
 			},

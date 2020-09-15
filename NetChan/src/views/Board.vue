@@ -53,7 +53,6 @@
 					});
 			} catch {}
 
-			this.loading = false;
 
 			// if board exists, get threads
 			if (this.boardExists === false) {
@@ -73,6 +72,8 @@
 					}
 				})
 				.catch();
+				
+			this.loading = false;
 		}
 	}
 </script>

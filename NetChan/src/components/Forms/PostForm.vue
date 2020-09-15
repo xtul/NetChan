@@ -165,7 +165,7 @@
 				let threadData = this.$parent.$data.threadData;
 
 				axios
-				.get('http://localhost:5934/api' + '/' + this.board + '/thread/' + this.threadId)
+				.get('http://localhost:5934/api/' + this.board + '/thread/' + this.threadId)
 				.then((response) => {
 					threadData = response.data;
 				})

@@ -46,6 +46,7 @@ exports.postFinder = {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
+                            postId = postId.replaceAll('>', '').replaceAll('&gt;', '').replaceAll(' (OP)', '');
                             url = 'http://localhost:5934/api/' + board + '/post/' + postId;
                             return [4 /*yield*/, axios_1["default"]
                                     .get(url)
