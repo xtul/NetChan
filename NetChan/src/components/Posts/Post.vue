@@ -2,9 +2,9 @@
 	<div :id="''">
 		<div class="filename">
 			<template v-if="post.image != null">
-				<template>
-					<a v-if="mode === 'op' && hidden === false" class="filename" v-on:click="hideThread(post.id)">[x]&nbsp;</a>
-					<a v-if="mode === 'op' && hidden === true" class="filename" v-on:click="hideThread(post.id)">[+]&nbsp;</a>
+				<template v-if="$route.name !== 'thread'">
+					<a v-if="mode === 'op' && hidden === false" v-on:click="hideThread(post.id)">[x]&nbsp;</a>
+					<a v-if="mode === 'op' && hidden === true" v-on:click="hideThread(post.id)">[+]&nbsp;</a>
 				</template>
 				<a v-if="hidden === false" target="_blank" rel="noopener noreferrer" :href="post.image">{{ getFilename(post.image) | truncate(32) }}</a>
 			</template>
@@ -76,7 +76,7 @@
 
 	export default {
 		name: 'Post',
-		props: ['post', 'mode', 'board', 'isThreadPreview'],
+		props: ['post', 'mode', 'board'],
 		mixins: [postFinder],
 		data() {
 			return {
