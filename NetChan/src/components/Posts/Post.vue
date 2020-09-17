@@ -18,8 +18,8 @@
 			</template>
 		</div>
 		<figure class="image" v-if="post.image != null && hidden === false">
-			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-if="post.spoilerImage === true" v-on:click="function(e){openImage(e, post.image)}" :id="'img-' + post.id" src="/img/spoiler.png">
-			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-else :id="'img-' + post.id" v-on:click="openImage" :src="getThumbnailUri(post.image)">
+			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-if="post.spoilerImage === true" v-on:click="function(e){openImage(e, '/img/spoiler.png', post.image)}" :id="'img-' + post.id" src="/img/spoiler.png">
+			<img onerror="this.onerror=null; this.src='/img/notfound.png'" v-else :id="'img-' + post.id" v-on:click="function(e){openImage(e, getThumbnailUri(post.image), post.image)}" :src="getThumbnailUri(post.image)">
 		</figure>
 		<div class="text">
 			<p class="heading">
@@ -91,11 +91,8 @@
         filters: {
         	truncate: function (text, length) {
 				const textSplit = text.split('.');
-				console.log(textSplit);
 				const fileName = textSplit.splice(0, textSplit.length - 1).join('.');
-				console.log(fileName);
 				const ext = '.' + textSplit[textSplit.length - 1];
-				console.log(ext);
 				// shorten only the last 
 				var shortenedText = fileName.substring(0, length);
 				if (shortenedText.length < fileName.length) {
@@ -104,7 +101,6 @@
 
 				shortenedText += ext;
 
-				console.log(shortenedText);
 				return shortenedText;
         	}
     	},
@@ -126,43 +122,22 @@
 				}
 
 				const splitUri = uri.split('.');
-				splitUri[splitUri.length - 2] = splitUri[splitUri.length - 2] + 's';
-
+				splitUri[splitUri.length - 2] += 's';
+				splitUri[splitUri.length - 1] = 'jpg';
+				console.log(splitUri.join('.'));
 				return splitUri.join('.');
 			},
-			openImage: (event, spoilerUrl) => {
+			openImage: (event, thumbUrl, fullUrl) => {
 				const img = event.target;
 				if (img.src.includes('img/notfound.png')) {
 					return;
 				}
 
-				// if image isn't a spoiler, add or remove 's' (signifies a thumbnail)
-				if (spoilerUrl == undefined) {
-					// split the filename into an array delimited by a dot
-					const srcSplit = img.src.split('.');
-
-					// since filename may contain dots anywhere, we're looking for the part just before extension
-					const beforeExt = srcSplit[srcSplit.length - 2];
-
-					// if 's' wasn't found at the end of filename, add it
-					if (beforeExt.charAt(beforeExt.length - 1) !== 's') {
-						srcSplit[srcSplit.length - 2] += 's';
-					// otherwise remove it
-					} else {
-						srcSplit[srcSplit.length - 2] = beforeExt.substring(0, beforeExt.length - 1);
-					}
-
-					// finally, join the array into a single string and change image source
-					img.src = srcSplit.join('.');
-				
-				// otherwise just set the url to the one provided
+				let cleanImgSrc = img.src.replace(window.location.origin, '').replaceAll('/', '\\');
+				if (cleanImgSrc === fullUrl) {
+					img.src = thumbUrl;
 				} else {
-					let cleanImgSrc = img.src.replace(window.location.origin, '').replaceAll('/', '\\');
-					if (cleanImgSrc === spoilerUrl) {
-						img.src = '/img/spoiler.png';
-					} else {
-						img.src = spoilerUrl;
-					}
+					img.src = fullUrl;
 				}
 
 				// stretch the image so everything appears on the bottom rather on the right
