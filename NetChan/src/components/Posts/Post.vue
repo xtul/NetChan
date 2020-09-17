@@ -6,7 +6,7 @@
 					<a v-if="mode === 'op' && hidden === false" v-on:click="hideThread(post.id)">[x]&nbsp;</a>
 					<a v-if="mode === 'op' && hidden === true" v-on:click="hideThread(post.id)">[+]&nbsp;</a>
 				</template>
-				<a v-if="hidden === false" target="_blank" rel="noopener noreferrer" :href="post.image">{{ getFilename(post.image) | truncate(32) }}</a>
+				<a v-if="hidden === false" target="_blank" rel="noopener noreferrer" :href="post.image" :title="getFilename(post.image)">{{ getFilename(post.image) | truncate(16) }}</a>
 			</template>
 			<template v-if="hidden === false && replies.length > 0">
 				<template v-if="post.image != null"> | </template>
@@ -91,16 +91,20 @@
         filters: {
         	truncate: function (text, length) {
 				const textSplit = text.split('.');
+				console.log(textSplit);
 				const fileName = textSplit.splice(0, textSplit.length - 1).join('.');
+				console.log(fileName);
 				const ext = '.' + textSplit[textSplit.length - 1];
+				console.log(ext);
 				// shorten only the last 
 				var shortenedText = fileName.substring(0, length);
-				if (shortenedText.length !== text.length) {
+				if (shortenedText.length < fileName.length) {
 					shortenedText += '(...)';
 				}
 
 				shortenedText += ext;
 
+				console.log(shortenedText);
 				return shortenedText;
         	}
     	},

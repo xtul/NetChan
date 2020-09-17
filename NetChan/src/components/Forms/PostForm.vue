@@ -8,30 +8,27 @@
 		<v-form name="postForm">
 			<v-container style="padding:0;" fluid :disabled="isPostingLoading">
 				<v-row dense>
-					<v-col md="9" lg="11" style="margin-bottom:20px;">
+					<v-col cols="9" lg="11" style="margin-bottom:20px;">
 						<span class="small">Closing posting panel will not discard your changes unless you navigate to a different page.</span>
 					</v-col>
-					<v-col class="close" v-on:click="opened = false">
+					<v-col cols="3" lg="1" class="close" v-on:click="opened = false">
 						<span class="exit">[</span>X<span class="exit">]</span>
 					</v-col>
 
 					<v-col v-if="errorMessage !== ''" cols="12">
 						<p class="error">{{ errorMessage }}</p>
 					</v-col>
-					<v-col xs="12" lg="6">
+					<v-col cols="12" lg="6">
 						<v-text-field :counter="32"
 									placeholder="Anonymous"
 									v-model="form.name"
 									label="Name" dense></v-text-field>
 					</v-col>
-					<v-col xs="12" lg="6">
+					<v-col cols="12" lg="6">
 						<v-text-field :counter="32"
 									placeholder="<sage>"
 									v-model="form.options"
 									label="Options" dense></v-text-field>
-					</v-col>
-					<v-col>
-						<v-checkbox v-model="form.spoilerImage" label="Spoiler"></v-checkbox>
 					</v-col>
 
 					<v-col v-if="mode === 'thread'" cols="12">
@@ -39,6 +36,10 @@
 									placeholder="<empty>"
 									v-model="form.subject"
 									label="Subject" dense></v-text-field>
+					</v-col>
+
+					<v-col cols="12">
+						<v-checkbox v-model="form.spoilerImage" label="Spoiler"></v-checkbox>
 					</v-col>
 
 					<v-col cols="12">
@@ -60,7 +61,7 @@
 						<v-btn depressed tile block height="100%" :disabled="!canPressUpload" v-on:click="uploadImage" >Upload<br />image</v-btn>
 					</v-col>
 
-					<v-col>
+					<v-col style="min-height:54px;">
 						<v-btn v-if="mode === 'thread'" :disabled="!canCreatePost" depressed tile block height="100%" v-on:click="submitForm" id="submitBtn">Create {{mode}}</v-btn>
 						<v-btn v-else :loading="isLoading" :disabled="isLoading" depressed tile block height="100%" v-on:click="submitForm" id="submitBtn">Create {{mode}}</v-btn>
 					</v-col>
