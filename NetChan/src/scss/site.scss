@@ -9,8 +9,12 @@ $primary-pale: lighten($primary, 38%);
 $green: #72ac2f;
 $red: #d00;
 
+$gray: rgb(158, 158, 158);
+
 $bg-top: #7ddcff;
 $bg-bot: #def6ff;
+
+$border-radius-root: 0;
 
 .v-main__wrap {
 	background: linear-gradient(0deg, $bg-bot 90%, $bg-top 100%);
@@ -86,7 +90,7 @@ p.content {
 }
 
 .op, .response {
-	padding: 1rem;
+	padding: 0.8rem;
 }
 
 .subject {
@@ -176,6 +180,10 @@ figure.image:hover, .close {
 	cursor:pointer;
 }
 
+.close {
+	text-align:right;
+}
+
 figure.image {
 	vertical-align: top;
     display: inline-block;
@@ -229,7 +237,7 @@ figcaption {
 
 .small {
 	font-size:9pt;
-	color:gray;
+	color:$gray;
 }
 
 .text {
@@ -259,4 +267,17 @@ figcaption {
 
 .postContent {
 	grid-area: 1 / 1;
+}
+
+.v-popover {
+	display:inline;
+}
+
+.form {
+	max-width:30%;
+	padding:20px;
+}
+
+.exit {
+	color:$gray;
 }

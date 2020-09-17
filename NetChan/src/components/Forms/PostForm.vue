@@ -1,37 +1,37 @@
 <template>
-	<v-card
-		v-if="opened"
-    	height="400"
-    	class="overflow-hidden"
-    >
 	<v-navigation-drawer
-		:v-model="opened"
-        :right="true"
-        :permanent="true"
-        absolute
-        dark
+		v-show="opened"
+        right permanent fixed
+		width="auto"
+		class="form"
 	>
-		<v-form>
+		<v-form name="postForm">
 			<v-container style="padding:0;" fluid :disabled="isPostingLoading">
 				<v-row dense>
-					<v-col cols="12">
-						<span class="close" v-on:click="opened = false">X</span>
+					<v-col md="9" lg="11" style="margin-bottom:20px;">
+						<span class="small">Closing posting panel will not discard your changes unless you navigate to a different page.</span>
+					</v-col>
+					<v-col class="close" v-on:click="opened = false">
+						<span class="exit">[</span>X<span class="exit">]</span>
 					</v-col>
 
 					<v-col v-if="errorMessage !== ''" cols="12">
 						<p class="error">{{ errorMessage }}</p>
 					</v-col>
-					<v-col cols="6">
+					<v-col xs="12" lg="6">
 						<v-text-field :counter="32"
 									placeholder="Anonymous"
 									v-model="form.name"
 									label="Name" dense></v-text-field>
 					</v-col>
-					<v-col cols="6">
+					<v-col xs="12" lg="6">
 						<v-text-field :counter="32"
-									placeholder="sage"
+									placeholder="<sage>"
 									v-model="form.options"
 									label="Options" dense></v-text-field>
+					</v-col>
+					<v-col>
+						<v-checkbox v-model="form.spoilerImage" label="Spoiler"></v-checkbox>
 					</v-col>
 
 					<v-col v-if="mode === 'thread'" cols="12">
@@ -49,30 +49,25 @@
 									dense></v-textarea>
 					</v-col>
 
-					<v-col cols="6">
+					<v-col cols="5">
 						<v-file-input accept="image/png, image/jpeg, image/gif"
 									show-size
 									label="Image" id="imageUploader"
 									:loading="isLoading"
 									:disabled="isLoading || !canPressUpload" dense></v-file-input>
 					</v-col>
-					<v-col cols="2">
+					<v-col>
 						<v-btn depressed tile block height="100%" :disabled="!canPressUpload" v-on:click="uploadImage" >Upload<br />image</v-btn>
 					</v-col>
 
-					<v-col cols="4">
+					<v-col>
 						<v-btn v-if="mode === 'thread'" :disabled="!canCreatePost" depressed tile block height="100%" v-on:click="submitForm" id="submitBtn">Create {{mode}}</v-btn>
 						<v-btn v-else :loading="isLoading" :disabled="isLoading" depressed tile block height="100%" v-on:click="submitForm" id="submitBtn">Create {{mode}}</v-btn>
-					</v-col>
-
-					<v-col cols="12">
-						<v-checkbox v-model="form.spoilerImage" label="Spoiler"></v-checkbox>
 					</v-col>
 				</v-row>
 			</v-container>
 		</v-form>
 	</v-navigation-drawer>
-	</v-card>
 </template>
 
 <script>
@@ -101,7 +96,16 @@
 			},
 			threadId() {
 				if (this.mode === 'post') {
-					return router.currentRoute.fullPath.split('/')[3];
+					return router.currentRoute.fullPath.split('/')[3].replace( /(?!\d+)(.*)/g, '');
+				}
+				return null;
+			},
+			latestPostId() {
+				if (this.mode === 'post') {
+					const refArr = Object.keys(this.$parent.$refs).filter(x => x.startsWith('post-'));
+					const latestRef = refArr[refArr.length - 1];
+					// return only the post id
+					return latestRef.replace( /\D+/g, '');
 				}
 				return null;
 			}
@@ -151,51 +155,68 @@
 					});
 				this.isLoading = false;
 			},
-			submitForm() {
+			async submitForm() {
 				this.isPostingLoading = true;
+
+				// construct url
 				let url = this.getAPIUrl() + this.board;
 				if (this.mode === 'post') {
-					url = url + '/thread/' + this.threadId;
+					url += '/thread/' + this.threadId;
 				}
 
-				axios.post(url, this.form)
-					.catch();
+				var postId = 0;
+				var postingFailed = false;
+
+				// send the post form
+				await axios.post(url, this.form)
+					.then((response) => {
+						postId = response.data.id;
+					})
+					.catch((err) => {
+						this.errorMessage = err;
+						postingFailed = true;
+					});
 				this.isPostingLoading = false;
 
-				let threadData = this.$parent.$data.threadData;
+				if (postingFailed) {
+					return;
+				}
 
-				axios
-				.get('http://localhost:5934/api/' + this.board + '/thread/' + this.threadId)
-				.then((response) => {
-					threadData = response.data;
-				})
-				.catch();
+				this.errorMessage = 'Posted successfully - you will be redirected soon.';
+				await this.sleep(2000);
+
+				// if it's a thread response, update posts in thread
+				if (this.mode === 'post') {
+					await axios.get(url + '/' + this.latestPostId)
+						.then((response) => {
+							const newPosts = response.data;
+							console.log(newPosts);
+							const oldPosts = this.$parent.threadData.posts;
+							console.log(oldPosts);
+
+							for (const post of newPosts) {
+								oldPosts.push(post);
+							}
+						})
+						.catch();
+					this.errorMessage = '';					
+					document.getElementById('post-' + postId).scrollIntoView();
+
+					// clear form
+					for (var prop in this.form) {
+						if (this.form.hasOwnProperty(prop)) {
+							this.form[prop] = { string: '', boolean: false }[typeof this.form[prop]];
+						}
+					}
+
+					// also mark this post as yours
+					this.updateLocalStorageJson('userPosts', postId);
+				// if it's a thread, navigate to it
+				} else {
+					router.push({ name: 'thread', params: { threadId: postId } });
+					router.go({ name: 'thread', params: { threadId: postId } });
+				}
 			}
 		}
 	};
 </script>
-
-<style scoped>
-	.draggable-parent { /* dragging box, basically */
-		height: 100vh;
-		width: 100vw;
-		position: fixed;
-		pointer-events: none;
-	}
-
-	.draggable { /* actual component */
-		pointer-events: all;
-		top: 30px;
-		right: 15px;
-		z-index: 999;
-		padding: 0.4rem;
-		background-color: #eefaff;
-		border-bottom: 1px solid #b0d9e8;
-		border-right: 1px solid #bce6f5;
-	}
-
-	.lol {
-		display:relative;
-		bottom:15px;
-	}
-</style>

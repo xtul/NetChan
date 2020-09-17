@@ -18,6 +18,29 @@ exports.boilerplate = {
             else {
                 return location.origin.substring(0, location.origin.length - 6) + '/api/';
             }
+        },
+        sleep: function (ms) {
+            return new Promise(function (resolve) { return setTimeout(resolve, ms); });
+        },
+        updateLocalStorageJson: function (key, newItem) {
+            var oldArray = JSON.parse(localStorage.getItem(key) || '[]');
+            // if the key is present
+            if (oldArray != null) {
+                // if this item is already present in json, remove it
+                if (oldArray.includes(newItem)) {
+                    oldArray = oldArray.filter(function (x) { return x !== newItem; });
+                    localStorage.setItem(key, JSON.stringify(oldArray));
+                    return;
+                }
+                // otherwise just add it
+                oldArray.push(newItem);
+                localStorage.setItem(key, JSON.stringify(oldArray));
+                // otherwise create new key with provided item
+            }
+            else {
+                var newArray = [newItem];
+                localStorage.setItem(key, JSON.stringify(newArray));
+            }
         }
     }
 };

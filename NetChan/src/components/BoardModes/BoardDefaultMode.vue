@@ -36,18 +36,11 @@
 		async mounted() {
 			const replyLinks = document.getElementsByClassName('reply');
 
-			// remove links to replies that don't exist
 			if (replyLinks.length > 0) {
 				for (const x of replyLinks) {
 					const id = x.innerHTML.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
 					if (this.isOp(id) === true && !x.innerHTML.includes(' (OP)')) {
 						x.innerHTML += ' (OP)';
-					}
-	
-					const exists = await this.postExists(id, this.boardData.postData.board);
-					if (exists === false) {
-						x.classList.remove('reply');
-						x.classList.add('notfound');
 					}
 				}
 			}

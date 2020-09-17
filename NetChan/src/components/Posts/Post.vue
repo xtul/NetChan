@@ -1,5 +1,5 @@
 <template>
-	<div :id="''">
+	<div>
 		<div class="filename">
 			<template v-if="post.image != null">
 				<template v-if="$route.name !== 'thread'">
@@ -10,6 +10,7 @@
 			</template>
 			<template v-if="hidden === false && replies.length > 0">
 				<template v-if="post.image != null"> | </template>
+				<template v-if="replies != null">Replies: </template>
 				<span v-for="(x, index) in replies" :key="x">
 					<a v-on:mouseleave="linkLeave(x.toString())" v-on:mouseover="linkHover(x.toString())" v-on:click="navigateToPost(x.toString())">>>{{x}}</a>
 					<template v-if="index < replies.length - 1">, </template>
@@ -49,7 +50,9 @@
 					</template>
 					<template v-else-if="line.includes('>>')">
 						<span v-for="x in regexReply(line)">
-							<a v-if="x.startsWith('>>')" class="reply" v-on:mouseleave="linkLeave(x)" v-on:mouseover="linkHover(x)" v-on:click="navigateToPost(x)">{{x}}</a>
+							<a v-if="x.startsWith('>>')" class="reply" v-on:mouseleave="linkLeave(x)" v-on:mouseover="linkHover(x)" v-on:click="navigateToPost(x)">
+								{{x}}
+							</a>
 							<span v-else>
 								{{x}}
 							</span>
@@ -73,11 +76,12 @@
 	import axios from 'axios';
 	import router from '../../router';
 	import { postFinder } from '@/mixins/postFinder.ts';
+	import { boilerplate } from '@/mixins/boilerplate.ts';
 
 	export default {
 		name: 'Post',
 		props: ['post', 'mode', 'board'],
-		mixins: [postFinder],
+		mixins: [ postFinder, boilerplate ],
 		data() {
 			return {
 				hidden: false,
@@ -178,14 +182,16 @@
 				// split the string by elements like ">>131", ">>235" and return the array
 				const result = line.replace(/(>>\d+)/g, '<split>$1').replace(/(>>\d+)/g, '$1<split>').split(/<split>/);
 
+				// create unique data entries (so only one preview opens instead of all of them)
+
 				// add this reply to the post in question ('replies' data member)
 				const postInQuestion = result.find(x => x.startsWith('>>'));
-				this.addReplies(postInQuestion.replace('>>', ''), this.post.id);
+				this.addReplies(postInQuestion.replace( /\D+/g, ''), this.post.id);
 
 				// return an array 
 				return result;
-			},
-			isInViewport: (element) => {
+			},			
+			isInViewport(element) {
 				const rect = element.getBoundingClientRect();
 				return (
 					rect.top >= 0 &&
@@ -207,9 +213,8 @@
 					}
 				}
 			},
-			linkHover(id) {
-				id = id.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
-				this.removeHighlights(id);
+			async linkHover(id) {
+				id = id.replace( /\D+/g, '');
 				const desiredPost = document.getElementById('post-' + id);
 
 				if (desiredPost == null) {
@@ -218,16 +223,14 @@
 
 				if (this.isInViewport(desiredPost) && desiredPost.classList.contains('op') === false) {
 					desiredPost.classList.add('highlighted');
-				} else {
-					// display preview...
 				}
 			},
 			linkLeave(id) {
-				id = id.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
+				id = id.replace( /\D+/g, '');
 				this.removeHighlights(id);
 			},
 			scrollToPost(id) {
-				id = id.replace('>>', '').replace('&gt;&gt;', '').replace(' (OP)', '');
+				id = id.replace( /\D+/g, '');
 				const desiredPost = document.getElementById('post-' + id);
 
 				// clear all highlights
@@ -249,7 +252,7 @@
 			},
 			async lookupThread(postId) {
 				const result = await axios
-					.get('http://localhost:5934/api/' + this.board + '/post/' + postId + '/thread')
+					.get(this.getAPIUrl() + this.board + '/post/' + postId + '/thread')
 					.then((response) => {
 						return response.data.threadId;
 					})
@@ -260,7 +263,7 @@
 				return result;
 			},
 			async navigateToPost(postId,) {
-				postId = postId.replaceAll('>', '').replaceAll('&gt;', '').replaceAll(' (OP)', '');
+				postId = postId.replace( /\D+/g, '');
 				const post = document.getElementById('post-' + postId);
 
 				// if post is not present on this page move to it's thread
@@ -317,31 +320,14 @@
 
 				this.hidden = !this.hidden;
 
-				// remember hidden threads between visits
-				var hiddenList = JSON.parse(localStorage.getItem('hiddenThreads'));
-
 				// if thread wasn't hidden automatically, ignore localStorage
 				if (autoHide) {
 					return;
 				}
 
-				// if the list is present
-				if (hiddenList != null) {
-					// if this thread is already present on the list, remove it
-					if (hiddenList.includes(threadId)) {
-						hiddenList = hiddenList.filter(x => x !== threadId);
-						localStorage.setItem('hiddenThreads', JSON.stringify(hiddenList));
-						return;
-					}
-					// otherwise just add it
-					hiddenList.push(threadId);
-					localStorage.setItem('hiddenThreads', JSON.stringify(hiddenList));
-				// otherwise create new list
-				} else {
-					const newList = [threadId]
-					localStorage.setItem('hiddenThreads', JSON.stringify(newList));
-				}
-			}
+				// remember hidden threads between visits
+				this.updateLocalStorageJson('hiddenThreads', threadId);
+			},
 		}
 	};
 </script>

@@ -10,6 +10,7 @@
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ this.params.board }}/ - {{ boardName }}</h1>
+					<h2>[<a v-on:click="openPostingForm">Start a New Thread</a>]</h2>
 					<hr />
 				</v-col>
 				<template v-if="mode === 'catalog' || mode === 'archive'">
@@ -26,10 +27,10 @@
 					<hr style="margin:0;" />
 				</v-col>
 				<v-col cols="12" v-if="mode === 'catalog'">
-					<BoardCatalogMode :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
+					<BoardCatalogMode ref="boardMode" :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
 				</v-col>
 				<v-col cols="12" v-else>
-					<BoardDefaultMode :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
+					<BoardDefaultMode ref="boardMode" :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
 				</v-col>
 			</v-row>
 		</v-container>
@@ -66,6 +67,12 @@
 		methods: {
 			initialWidth: () => {
 				return window.innerWidth - 600 - 100;
+			},
+			openPostingForm() {
+				const boardMode = this.$refs.boardMode;
+				const postingForm = boardMode.$refs.postForm;
+
+				postingForm.opened = true;
 			}
 		}
 	};

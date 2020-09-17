@@ -10,6 +10,7 @@
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ params.board }}/ - {{ boardName }}</h1>
+					<h2>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
 					<hr />
 				</v-col>
 			</v-row>
@@ -21,16 +22,21 @@
 					<hr />
 				</v-col>
 				<v-col cols="12" class="thread">
-					<!-- <ThreadView :threadData="threadData" :board="shortBoard"/> -->
 					<PostForm ref="postForm" />
 					<div v-for="(post, index) in threadData.posts" :key="post.id">
 						<div v-if="index === 0" class="op" :id="'post-' + post.id">
-							<Post :ref="'post-' + post.id" :post="post" mode="op" :board="params.board" :isThreadPreview="true" />
+							<Post :ref="'post-' + post.id" :post="post" mode="op" :board="params.board" />
 						</div>
 						<div v-else class="response" :class="'thread-' + threadData.posts[0].id" :id="'post-' + post.id">
-							<Post :ref="'post-' + post.id" :post="post" mode="response" :board="params.board" :isThreadPreview="true" />
+							<Post :ref="'post-' + post.id" :post="post" mode="response" :board="params.board" />
 						</div>
 					</div>
+				</v-col>
+			</v-row>
+			<v-row>
+				<v-col cols=12>
+					<hr/>
+					<h2>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
 				</v-col>
 			</v-row>
 		</v-container>
@@ -80,15 +86,23 @@
 			// remove links from nonexistent replies
 			if (replyLinks.length > 0) {
 				for (const x of replyLinks) {
-					const id = x.innerHTML.replaceAll('>', '').replaceAll('&gt;', '').replaceAll(' (OP)', '');
+					const id = x.innerHTML.replace( /\D+/g, '');
 					if (this.isOp(id) === true && !x.innerHTML.includes(' (OP)')) {
 						x.innerHTML += ' (OP)';
 					}
-	
-					const exists = await this.postExists(id, this.params.board);
-					if (exists === false) {
-						x.classList.remove('reply');
-						x.classList.add('notfound');
+
+					if (this.$refs['post-' + id] == null) {
+						const exists = await this.postExists(id, this.params.board);
+						if (exists === false) {
+							x.classList.remove('reply');
+							x.classList.add('notfound');
+						}
+					}
+
+					if (JSON.parse(localStorage.getItem('userPosts').includes(id))) {
+						if (!x.innerHTML.includes(' (You)')) {
+							x.innerHTML += ' (You)';
+						}
 					}
 				}
 			}
@@ -97,6 +111,11 @@
 		methods: {
 			initialWidth: () => {
 				return window.innerWidth - 600 - 100;
+			},
+			openPostingForm() {
+				const postingForm = this.$refs.postForm;
+
+				postingForm.opened = true;
 			}
 		},
 		async beforeMount() {
