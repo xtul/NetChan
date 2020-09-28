@@ -33,3 +33,5 @@ Any code contribution or issue report is welcome.
 Running this project requires Node.js (built on version 12) and Vue CLI.
 
 Open `NetChan` directory in the command line and run `npm run serve` to host a development server. You will also need to create a hardlink to the /wwwroot/img directory of [NetBoard](https://github.com/xtul/NetBoard) binary - in production, a load balancer such as Nginx should handle it.
+
+Additionally you may want to create a fake domain (eg. using hosts on Windows) - hCaptcha refuses to work on localhost.
