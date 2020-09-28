@@ -44,12 +44,12 @@
 				</span>
 			</p>
 			<span class="content">
-				<div class="content" v-for="line in cleanup(post.content)" :key="line">
+				<div class="content" v-for="(line, index) in cleanup(post.content)" :key="index">
 					<template v-if="line.startsWith('>>>')">
 						<span class="board-link">{{line}}</span>
 					</template>
 					<template v-else-if="line.includes('>>')">
-						<span v-for="x in regexReply(line)" :key="x">
+						<span v-for="(x, index) in regexReply(line)" :key="index">
 							<a v-if="x.startsWith('>>')" class="reply" v-on:mouseleave="linkLeave(x)" v-on:mouseover="linkHover(x)" v-on:click="navigateToPost(x)">
 								{{x}}
 							</a>

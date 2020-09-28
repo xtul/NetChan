@@ -53,17 +53,17 @@
 					<v-col cols="5">
 						<v-file-input accept="image/png, image/jpeg, image/gif"
 									show-size
-									label="Image" id="imageUploader"
+									label="Image" ref="imageUploader" id="imageUploader"
 									:loading="isLoading"
 									:disabled="isLoading || !canPressUpload" dense></v-file-input>
 					</v-col>
 
 					<v-col cols="12">
-						<vue-hcaptcha sitekey="d041474a-cb4d-4a32-a789-0965db939327"></vue-hcaptcha>
+						<vue-hcaptcha @verify="captchaOnVerify" @expired="captchaOnExpired" class="h-captcha" sitekey="d041474a-cb4d-4a32-a789-0965db939327"></vue-hcaptcha>
 					</v-col>
 
 					<v-col>
-						<v-btn depressed tile block height="100%" :disabled="!canPressUpload" v-on:click="uploadImage" >Upload image</v-btn>
+						<v-btn depressed tile block height="100%" :disabled="!canPressUpload" v-on:click="uploadImage">Upload image</v-btn>
 					</v-col>
 
 					<v-col style="min-height:54px;">
@@ -134,13 +134,15 @@
 					subject: '',
 					content: '',
 					image: '',
-					spoilerImage: false
+					spoilerImage: false,
+					captchaCode: ""
 				}
 			};
 		},
 		methods: {
 			async uploadImage() {
 				const imageUploader = document.getElementById('imageUploader');
+				console.log(imageUploader);
 				const formData = new FormData();
 
 				formData.append('file', imageUploader.files[0]);
@@ -163,7 +165,26 @@
 					});
 				this.isLoading = false;
 			},
+			captchaOnVerify(event) {
+				const code = document.getElementsByName('h-captcha-response')[0].value;
+				this.form.captchaCode = code;
+			},
+			captchaOnExpired(event) {
+				this.form.captchaCode = '';
+			},
+			captchaTest() {
+				if (this.form.captchaCode == '') {
+					return false;
+				} else {					
+					return true;
+				}
+			},
 			async submitForm() {
+				if (this.captchaTest() === false) {
+					this.errorMessage = 'Invalid captcha.';
+					return;
+				}
+
 				this.isPostingLoading = true;
 
 				// construct url
@@ -193,6 +214,7 @@
 				this.errorMessage = 'Posted successfully - you will be redirected soon.';
 				await this.sleep(1500);
 
+
 				// mark this post as yours
 				this.updateLocalStorageJson(this.board + '_userPosts', postId);
 
@@ -204,7 +226,9 @@
 							const oldPosts = this.$parent.threadData.posts;
 
 							for (const post of newPosts) {
-								oldPosts.push(post);
+								if (!oldPosts.includes(post)) {
+									oldPosts.push(post);
+								}
 							}
 						})
 						.catch();
@@ -212,8 +236,14 @@
 					document.getElementById('post-' + postId).scrollIntoView();
 
 					// clear form
+					this.canPressUpload = true;
+					this.$refs['imageUploader'].lazyValue = undefined;
 					for (var prop in this.form) {
 						if (this.form.hasOwnProperty(prop)) {
+							if (this.form[prop] === this.form.captchaCode) {
+								// don't remove the captcha code
+								continue;
+							}
 							this.form[prop] = { string: '', boolean: false }[typeof this.form[prop]];
 						}
 					}
