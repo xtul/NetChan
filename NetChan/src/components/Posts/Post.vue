@@ -43,13 +43,13 @@
 					[!]
 				</span>
 			</p>
-			<p class="content">
-				<template v-for="line in cleanup(post.content)">
+			<span class="content">
+				<div class="content" v-for="line in cleanup(post.content)" :key="line">
 					<template v-if="line.startsWith('>>>')">
 						<span class="board-link">{{line}}</span>
 					</template>
 					<template v-else-if="line.includes('>>')">
-						<span v-for="x in regexReply(line)">
+						<span v-for="x in regexReply(line)" :key="x">
 							<a v-if="x.startsWith('>>')" class="reply" v-on:mouseleave="linkLeave(x)" v-on:mouseover="linkHover(x)" v-on:click="navigateToPost(x)">
 								{{x}}
 							</a>
@@ -65,8 +65,8 @@
 						{{line}}
 					</template>
 					<br>
-				</template>
-			</p>
+				</div>
+			</span>
 		</div>
 	</div>
 </template>
@@ -123,7 +123,6 @@
 				const splitUri = uri.split('.');
 				splitUri[splitUri.length - 2] += 's';
 				splitUri[splitUri.length - 1] = 'jpg';
-				console.log(splitUri.join('.'));
 				return splitUri.join('.');
 			},
 			openImage: (event, thumbUrl, fullUrl) => {

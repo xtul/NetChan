@@ -10,7 +10,8 @@
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ params.board }}/ - {{ boardName }}</h1>
-					<h2>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
+					<h2 v-if="boardData.threads[0].archived">This thread is closed.</h2>
+					<h2 v-else>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
 					<hr />
 				</v-col>
 			</v-row>
@@ -22,7 +23,7 @@
 					<hr />
 				</v-col>
 				<v-col cols="12" class="thread">
-					<PostForm ref="postForm" />
+					<PostForm v-if="boardData.threads[0].archived === false" ref="postForm" />
 					<div v-for="(post, index) in threadData.posts" :key="post.id">
 						<div v-if="index === 0" class="op" :id="'post-' + post.id">
 							<Post :ref="'post-' + post.id" :post="post" mode="op" :board="params.board" />
@@ -36,7 +37,8 @@
 			<v-row>
 				<v-col cols=12>
 					<hr/>
-					<h2>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
+					<h2 v-if="boardData.threads[0].archived">This thread is closed.</h2>
+					<h2 v-else>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
 				</v-col>
 			</v-row>
 		</v-container>

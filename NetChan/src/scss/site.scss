@@ -16,8 +16,12 @@ $bg-bot: #def6ff;
 
 $border-radius-root: 0;
 
+#app {
+	background:$bg-bot;
+}
+
 .v-main__wrap {
-	background: linear-gradient(0deg, $bg-bot 90%, $bg-top 100%);
+	background:url('/bg.png') repeat-x;
 }
 
 .v-card__title {
@@ -63,7 +67,7 @@ p {
 	display: block;
 }
 
-p.content {
+.content {
 	font-size: 14px;
 }
 
@@ -280,4 +284,8 @@ figcaption {
 
 .exit {
 	color:$gray;
+}
+
+.nostyle {
+	all:unset;
 }

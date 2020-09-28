@@ -63,7 +63,7 @@
 					</v-col>
 
 					<v-col>
-						<v-btn depressed tile block height="100%" :disabled="!canPressUpload" v-on:click="uploadImage" >Upload<br />image</v-btn>
+						<v-btn depressed tile block height="100%" :disabled="!canPressUpload" v-on:click="uploadImage" >Upload image</v-btn>
 					</v-col>
 
 					<v-col style="min-height:54px;">
@@ -191,16 +191,14 @@
 				}
 
 				this.errorMessage = 'Posted successfully - you will be redirected soon.';
-				await this.sleep(2000);
+				await this.sleep(1500);
 
 				// if it's a thread response, update posts in thread
 				if (this.mode === 'post') {
 					await axios.get(url + '/' + this.latestPostId)
 						.then((response) => {
 							const newPosts = response.data;
-							console.log(newPosts);
 							const oldPosts = this.$parent.threadData.posts;
-							console.log(oldPosts);
 
 							for (const post of newPosts) {
 								oldPosts.push(post);
