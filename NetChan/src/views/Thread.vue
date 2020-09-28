@@ -38,7 +38,7 @@
 				loading: true
 			};
 		}
-		private async beforeCreate() {
+		private async mounted() {
 			const apiUrl = this.getAPIUrl();
 
 			// make sure this thread even exists, also get full board name
