@@ -4,7 +4,7 @@ export const postFinder = {
 	methods: {
 		async postExists(postId: any, board: string): Promise<boolean> {
 			postId = postId.replaceAll('>', '').replaceAll('&gt;', '').replaceAll(' (OP)', '');
-			const url = 'http://localhost:5934/api/' + board + '/post/' + postId;
+			const url = this.getAPIUrl() + board + '/post/' + postId;
 
 			const result = await axios
 				.get(url)

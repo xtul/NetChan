@@ -10,8 +10,10 @@ var router_1 = require("./router");
 var index_1 = require("@/store/index");
 require("./registerServiceWorker");
 var date_filter_1 = require("@/filters/date.filter");
+var boilerplate_1 = require("@/mixins/boilerplate");
 vue_1["default"].config.productionTip = true;
 vue_1["default"].filter('date', date_filter_1["default"]);
+vue_1["default"].mixin(boilerplate_1.boilerplate);
 new vue_1["default"]({
     vuetify: vuetify_1["default"],
     router: router_1["default"],

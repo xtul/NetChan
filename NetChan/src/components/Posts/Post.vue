@@ -76,12 +76,11 @@
 	import axios from 'axios';
 	import router from '../../router';
 	import { postFinder } from '@/mixins/postFinder.ts';
-	import { boilerplate } from '@/mixins/boilerplate.ts';
 
 	export default {
 		name: 'Post',
 		props: ['post', 'mode', 'board'],
-		mixins: [ postFinder, boilerplate ],
+		mixins: [ postFinder ],
 		data() {
 			return {
 				hidden: false,

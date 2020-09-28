@@ -8,10 +8,13 @@ import router from './router';
 import store from '@/store/index';
 import './registerServiceWorker';
 import dateFilter from '@/filters/date.filter';
+import { boilerplate } from '@/mixins/boilerplate';
 
 Vue.config.productionTip = true;
 
 Vue.filter('date', dateFilter);
+
+Vue.mixin(boilerplate);
 
 new Vue({
 	vuetify,

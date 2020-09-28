@@ -39,11 +39,13 @@
 			};
 		}
 		private async beforeCreate() {
+			const apiUrl = this.getAPIUrl();
+
 			// make sure this thread even exists, also get full board name
-			const board = '/' + router.currentRoute.fullPath.split('/')[1] + '/';
+			const board = router.currentRoute.fullPath.split('/')[1];
 			try {
 				await axios
-					.get('http://localhost:5934/api' + board)
+					.get(apiUrl + this.$route.params.board)
 					.then((response) => {
 						this.boardName = response.data;
 						this.boardExists = true;
@@ -52,7 +54,7 @@
 			} catch {}
 			try {
 				await axios
-					.get('http://localhost:5934/api' + board)
+					.get(apiUrl + this.$route.params.board)
 					.then((response) => {
 						this.boardName = response.data;
 						this.boardExists = true;
@@ -71,7 +73,7 @@
 				page = '1';
 			}
 			await axios
-				.get('http://localhost:5934/api/' + this.$route.params.board + '/' + page)
+				.get(apiUrl + this.$route.params.board + '/' + page)
 				.then((response) => {
 					if (response.status === 404) {
 						this.boardData = {};

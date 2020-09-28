@@ -57,6 +57,11 @@
 									:loading="isLoading"
 									:disabled="isLoading || !canPressUpload" dense></v-file-input>
 					</v-col>
+
+					<v-col cols="12">
+						<vue-hcaptcha sitekey="d041474a-cb4d-4a32-a789-0965db939327"></vue-hcaptcha>
+					</v-col>
+
 					<v-col>
 						<v-btn depressed tile block height="100%" :disabled="!canPressUpload" v-on:click="uploadImage" >Upload<br />image</v-btn>
 					</v-col>
@@ -75,11 +80,13 @@
 	import router from '../../router';
 	import moment from 'moment';
 	import axios from 'axios';
-	import { boilerplate } from '@/mixins/boilerplate.ts';
+	import VueHcaptcha from '@hcaptcha/vue-hcaptcha';
 
 	export default {
 		name: 'PostForm',
-		mixins: [boilerplate],
+		components: {
+			VueHcaptcha
+		},
 		computed: {
 			board() {
 				return router.currentRoute.fullPath.split('/')[1];

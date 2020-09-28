@@ -16,7 +16,7 @@
 			type: String,
 		},
 		mounted() {
-			fetch('http://localhost:5934/api/frontpage/' + this.type)
+			fetch(this.getAPIUrl() + 'frontpage/' + this.type)
 				.then((response) => response.json())
 				.then((data) => {
 					this.message = data.message;

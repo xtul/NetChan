@@ -14,7 +14,7 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script>
 	import { Component, Vue } from 'vue-property-decorator';
 	import router from '../router';
 	import axios from 'axios';
@@ -25,10 +25,10 @@
 		components: {
 			MainBoard,
 			NotFound
-		},
+		}
 	})
 	export default class Board extends Vue {
-		public data() {
+		data() {
 			return {
 				boardName: 'none',
 				boardExists: false,
@@ -36,19 +36,19 @@
 				boardData: {},
 				loading: true
 			};
-		}
-		private async beforeCreate() {
+		};
+		async mounted() {
+			const apiUrl = this.getAPIUrl();
+
 			// make sure this board even exists, also get full board name
-			const board = '/' + router.currentRoute.fullPath.split('/')[1] + '/';
 			try {
 				await axios
-					.get('http://localhost:5934/api' + board)
+					.get(apiUrl + this.$route.params.board)
 					.then((response) => {
 						this.boardName = response.data;
 						this.boardExists = true;
 					})
 					.catch((error) => {
-						console.log(error);
 						this.errorMsg = error;
 					});
 			} catch {}
@@ -63,7 +63,7 @@
 				page = '1';
 			}
 			await axios
-				.get('http://localhost:5934/api/' + this.$route.params.board + '/' + page)
+				.get(apiUrl + this.$route.params.board + '/' + page)
 				.then((response) => {
 					if (response.status === 404) {
 						this.boardData = {};
@@ -74,7 +74,7 @@
 				.catch();
 				
 			this.loading = false;
-		}
+		};
 	}
 </script>
 

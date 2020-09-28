@@ -15,7 +15,7 @@
 			};
 		},
 		mounted() {
-			fetch('http://localhost:5934/api/frontpage/boards')
+			fetch(this.getAPIUrl() + 'frontpage/boards')
 				.then((response) => response.json())
 				.then((data) => {
 					this.boards = data;

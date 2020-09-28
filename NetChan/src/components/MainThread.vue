@@ -122,7 +122,7 @@
 			// get thread info
 			if (this.boardName !== 'none') {
 				await axios
-					.get('http://localhost:5934/api' + '/' + this.params.board + '/thread/' + this.params.threadId)
+					.get(this.getAPIUrl() + this.params.board + '/thread/' + this.params.threadId)
 					.then((response) => {
 						this.threadData = response.data;
 					})
