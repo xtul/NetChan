@@ -303,7 +303,7 @@
 				}
 
 				// remember hidden threads between visits
-				this.updateLocalStorageJson('hiddenThreads', threadId);
+				this.updateLocalStorageJson(this.board + '_hiddenThreads', threadId);
 			},
 		}
 	};

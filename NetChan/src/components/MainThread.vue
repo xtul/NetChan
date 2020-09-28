@@ -37,6 +37,10 @@
 			<v-row>
 				<v-col cols=12>
 					<hr/>
+					<div class="nav" v-if="boardData.threads[0].archived === false">
+						[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]
+					</div>
+					<hr/>
 					<h2 v-if="boardData.threads[0].archived">This thread is closed.</h2>
 					<h2 v-else>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
 				</v-col>
@@ -101,7 +105,7 @@
 						}
 					}
 
-					if (JSON.parse(localStorage.getItem('userPosts').includes(id))) {
+					if (JSON.parse(localStorage.getItem(this.params.board + '_userPosts').includes(id))) {
 						if (!x.innerHTML.includes(' (You)')) {
 							x.innerHTML += ' (You)';
 						}

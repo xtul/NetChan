@@ -19,13 +19,18 @@
 		sleep(ms: number) {
 			return new Promise(resolve => setTimeout(resolve, ms));
 		},
-		updateLocalStorageJson(key: string, newItem: any) {
+		updateLocalStorageJson(key: string, newItem: any, keepIfExists: boolean = false) {
 			var oldArray: Array<any> = JSON.parse(localStorage.getItem(key) || '[]');
 
 			// if the key is present
 			if (oldArray != null) {
-				// if this item is already present in json, remove it
+				// if this item already exists...
 				if (oldArray.includes(newItem)) {
+					// don't remove it if we're told so
+					if (keepIfExists === true) {
+						return;
+					}
+					// otherwise remove this key
 					oldArray = oldArray.filter(x => x !== newItem);
 					localStorage.setItem(key, JSON.stringify(oldArray));
 					return;

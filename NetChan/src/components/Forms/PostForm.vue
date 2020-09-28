@@ -193,6 +193,9 @@
 				this.errorMessage = 'Posted successfully - you will be redirected soon.';
 				await this.sleep(1500);
 
+				// mark this post as yours
+				this.updateLocalStorageJson(this.board + '_userPosts', postId);
+
 				// if it's a thread response, update posts in thread
 				if (this.mode === 'post') {
 					await axios.get(url + '/' + this.latestPostId)
@@ -214,9 +217,6 @@
 							this.form[prop] = { string: '', boolean: false }[typeof this.form[prop]];
 						}
 					}
-
-					// also mark this post as yours
-					this.updateLocalStorageJson('userPosts', postId);
 				// if it's a thread, navigate to it
 				} else {
 					router.push({ name: 'thread', params: { threadId: postId } });

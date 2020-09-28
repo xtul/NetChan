@@ -48,7 +48,7 @@
 		beforeMount() {
 			this.$nextTick(() => {
       			// hide all threads that are in localStorage
-				const hiddenList = JSON.parse(localStorage.getItem('hiddenThreads'));
+				const hiddenList = JSON.parse(localStorage.getItem(this.boardData.pageData.board + '_hiddenThreads'));
 				for (const key of hiddenList) {
 					const post = this.$refs['post-' + key];
 					if (post == null) {
