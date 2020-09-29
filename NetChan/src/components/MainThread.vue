@@ -6,7 +6,7 @@
 				<img src="../assets/logo.png" class="logo" />
 			</a>
 		</v-layout>
-		<v-container no-gutters fluid v-if="boardName !== 'none' || params.threadId !== 0">
+		<v-container no-gutters fluid>
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ params.board }}/ - {{ boardName }}</h1>
@@ -38,23 +38,19 @@
 				<v-col cols=12>
 					<hr/>
 					<div class="nav" v-if="boardData.threads[0].archived === false">
-						[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]
+						[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]&nbsp;
+						[<a ref="updateThread" v-on:click="updateThread">Update</a>]
+						[<input type="checkbox" v-model="autoUpdate.enabled" v-on:click="toggleTimer()"><a v-on:click="autoUpdate.enabled = !autoUpdate.enabled; toggleTimer()">Auto</a>]
+						<template v-if="autoUpdate.enabled">
+							{{ autoUpdate.timer }}
+						</template>
+						<span style="padding-left:.2rem" v-if="autoUpdate.message != null">
+							{{autoUpdate.message}}
+						</span>
 					</div>
 					<hr/>
 					<h2 v-if="boardData.threads[0].archived">This thread is closed.</h2>
 					<h2 v-else>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
-				</v-col>
-			</v-row>
-		</v-container>
-		<v-container v-else column align-center>
-			<v-row>
-				<v-col cols="12">
-					<v-card class="rounded-0">
-						<v-card-title>404.</v-card-title>
-						<v-card-text>
-							<p>Thread doesn't exist.</p>
-						</v-card-text>
-					</v-card>
 				</v-col>
 			</v-row>
 		</v-container>
@@ -75,8 +71,39 @@
 		name: 'MainThread',
 		data() {
 			return {
-				threadData: {}
+				threadData: {},
+				autoUpdate: {
+					enabled: false,
+					timer: 20,
+					timerBounceback: 20,
+					message: ''
+				}
 			};
+		},
+		computed: {
+			latestPostId() {
+				const refArr = Object.keys(this.$refs).filter(x => x.startsWith('post-'));
+				var highestId = 0;
+
+				// iterate over all refs and keep increasing 'highestId' until no higher id occurs
+				for (const ref of refArr) {
+					const id = parseInt(ref.replace( /\D+/g, ''));
+					if (id > highestId) {
+						highestId = id;
+					}
+				}
+				return highestId;
+			}
+		},
+		watch: {
+			autoUpdate: {
+				handler: function(newValue) {
+					if (newValue.timer === 0) {
+						this.updateThread(null);
+					}
+				},
+				deep: true
+			}
 		},
 		mixins: [postFinder],
 		components: {
@@ -122,13 +149,63 @@
 				const postingForm = this.$refs.postForm;
 
 				postingForm.opened = true;
+			},
+			async updateThread(e) {
+				this.autoUpdate.message = 'Fetching...';
+				var failed = false;
+				await axios.get(this.$getAPIUrl() + this.params.board + '/thread/' + this.params.threadId + '/' + this.latestPostId)
+						.then((response) => {
+							const newPosts = response.data;
+							const oldPosts = this.threadData.posts;
+
+							for (const post of newPosts) {
+								if (!oldPosts.includes(post)) {
+									oldPosts.push(post);
+								}
+							}
+
+							if (newPosts.length === 1) {
+								this.autoUpdate.message = '1 new post.'
+							} else {
+								this.autoUpdate.message = newPosts.length + ' new posts.'
+							}
+
+							// reset bounceback since it looks like there's activity
+							this.autoUpdate.timerBounceback = 20;
+						})
+						.catch(() => {
+							failed = true;
+						});
+				
+				// we're handling this outside axios because it runs multiple times for some reason
+				if (failed) {
+					this.autoUpdate.message = 'No new posts.'
+					if (this.autoUpdate.timerBounceback < 900) {
+						const increment = this.autoUpdate.timerBounceback * 1.5;
+						this.autoUpdate.timerBounceback = Math.round(increment);
+					} else {
+						this.autoUpdate.timerBounceback = 900;
+					}
+				}
+
+				// reset the timer to current bounceback
+				this.autoUpdate.timer = this.autoUpdate.timerBounceback;
+			},
+			async toggleTimer() {
+				while(true) {
+					await this.$sleep(1000);
+					if (!this.autoUpdate.enabled) {
+						break;
+					}
+					this.autoUpdate.timer -= 1;
+				}	
 			}
 		},
 		async beforeMount() {
 			// get thread info
 			if (this.boardName !== 'none') {
 				await axios
-					.get(this.getAPIUrl() + this.params.board + '/thread/' + this.params.threadId)
+					.get(this.$getAPIUrl() + this.params.board + '/thread/' + this.params.threadId)
 					.then((response) => {
 						this.threadData = response.data;
 					})

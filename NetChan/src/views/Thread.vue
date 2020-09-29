@@ -39,7 +39,7 @@
 			};
 		}
 		private async mounted() {
-			const apiUrl = this.getAPIUrl();
+			const apiUrl = this.$getAPIUrl();
 
 			// make sure this thread even exists, also get full board name
 			const board = router.currentRoute.fullPath.split('/')[1];

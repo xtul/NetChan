@@ -38,7 +38,7 @@
 			};
 		};
 		async mounted() {
-			const apiUrl = this.getAPIUrl();
+			const apiUrl = this.$getAPIUrl();
 
 			// make sure this board even exists, also get full board name
 			try {

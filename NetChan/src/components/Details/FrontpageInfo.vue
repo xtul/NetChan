@@ -16,7 +16,7 @@
 			type: String,
 		},
 		mounted() {
-			fetch(this.getAPIUrl() + 'frontpage/' + this.type)
+			fetch(this.$getAPIUrl() + 'frontpage/' + this.type)
 				.then((response) => response.json())
 				.then((data) => {
 					this.message = data.message;

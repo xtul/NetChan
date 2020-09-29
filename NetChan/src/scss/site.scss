@@ -12,7 +12,7 @@ $red: #d00;
 $gray: rgb(158, 158, 158);
 
 $bg-top: #7ddcff;
-$bg-bot: #def6ff;
+$bg-bot: #e9f8ff;
 
 $border-radius-root: 0;
 
@@ -133,7 +133,7 @@ p {
 }
 
 p.heading {
-	min-width: 650px;
+	margin-right:3rem;
 }
 
 .actions {
@@ -207,6 +207,13 @@ figcaption {
 
 .nav {
 	padding-left:1rem;
+	display:flex;
+	align-items:center;
+	font-size:.9rem;
+}
+
+.nav > input {
+	margin:0.2rem;
 }
 
 .create-post {

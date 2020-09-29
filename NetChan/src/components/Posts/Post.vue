@@ -229,7 +229,7 @@
 			},
 			async lookupThread(postId) {
 				const result = await axios
-					.get(this.getAPIUrl() + this.board + '/post/' + postId + '/thread')
+					.get(this.$getAPIUrl() + this.board + '/post/' + postId + '/thread')
 					.then((response) => {
 						return response.data.threadId;
 					})
@@ -303,7 +303,7 @@
 				}
 
 				// remember hidden threads between visits
-				this.updateLocalStorageJson(this.board + '_hiddenThreads', threadId);
+				this.$updateLocalStorageJson(this.board + '_hiddenThreads', threadId);
 			},
 		}
 	};

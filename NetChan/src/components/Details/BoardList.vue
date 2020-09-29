@@ -15,7 +15,7 @@
 			};
 		},
 		mounted() {
-			fetch(this.getAPIUrl() + 'frontpage/boards')
+			fetch(this.$getAPIUrl() + 'frontpage/boards')
 				.then((response) => response.json())
 				.then((data) => {
 					this.boards = data;

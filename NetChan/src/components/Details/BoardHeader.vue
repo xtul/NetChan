@@ -30,7 +30,7 @@
 		},
 		mounted() {
 			axios
-				.get(this.getAPIUrl() + 'frontpage/boards')
+				.get(this.$getAPIUrl() + 'frontpage/boards')
 				.then((response) => {
 					this.boards = response.data;
 				});

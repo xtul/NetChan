@@ -1,6 +1,6 @@
 ﻿export const boilerplate = {
 	methods: {
-		isDevelopment() {
+		$isDevelopment() {
 			if (process.env.NODE_ENV !== 'production' &&
 				process.env.NODE_ENV !== 'test' &&
 				typeof console !== 'undefined'
@@ -9,17 +9,17 @@
 			}
 			return false;
 		},
-		getAPIUrl() {
-			if (this.isDevelopment()) {
+		$getAPIUrl() {
+			if (this.$isDevelopment()) {
 				return 'http://localhost:5934/api/';
 			} else {
 				return location.origin.substring(0, location.origin.length - 6) + '/api/';
 			}
 		},
-		sleep(ms: number) {
+		$sleep(ms: number) {
 			return new Promise(resolve => setTimeout(resolve, ms));
 		},
-		updateLocalStorageJson(key: string, newItem: any, keepIfExists: boolean = false) {
+		$updateLocalStorageJson(key: string, newItem: any, keepIfExists: boolean = false) {
 			var oldArray: Array<any> = JSON.parse(localStorage.getItem(key) || '[]');
 
 			// if the key is present

@@ -47,7 +47,7 @@ exports.postFinder = {
                     switch (_a.label) {
                         case 0:
                             postId = postId.replaceAll('>', '').replaceAll('&gt;', '').replaceAll(' (OP)', '');
-                            url = this.getAPIUrl() + board + '/post/' + postId;
+                            url = this.$getAPIUrl() + board + '/post/' + postId;
                             return [4 /*yield*/, axios_1["default"]
                                     .get(url)
                                     .then(function () {

@@ -3,7 +3,7 @@ exports.__esModule = true;
 exports.boilerplate = void 0;
 exports.boilerplate = {
     methods: {
-        isDevelopment: function () {
+        $isDevelopment: function () {
             if (process.env.NODE_ENV !== 'production' &&
                 process.env.NODE_ENV !== 'test' &&
                 typeof console !== 'undefined') {
@@ -11,18 +11,18 @@ exports.boilerplate = {
             }
             return false;
         },
-        getAPIUrl: function () {
-            if (this.isDevelopment()) {
+        $getAPIUrl: function () {
+            if (this.$isDevelopment()) {
                 return 'http://localhost:5934/api/';
             }
             else {
                 return location.origin.substring(0, location.origin.length - 6) + '/api/';
             }
         },
-        sleep: function (ms) {
+        $sleep: function (ms) {
             return new Promise(function (resolve) { return setTimeout(resolve, ms); });
         },
-        updateLocalStorageJson: function (key, newItem, keepIfExists) {
+        $updateLocalStorageJson: function (key, newItem, keepIfExists) {
             if (keepIfExists === void 0) { keepIfExists = false; }
             var oldArray = JSON.parse(localStorage.getItem(key) || '[]');
             // if the key is present

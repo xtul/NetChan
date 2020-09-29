@@ -39,10 +39,6 @@
 					</v-col>
 
 					<v-col cols="12">
-						<v-checkbox v-model="form.spoilerImage" label="Spoiler"></v-checkbox>
-					</v-col>
-
-					<v-col cols="12">
 						<v-textarea label="Content"
 									counter="4000"
 									v-model="form.content"
@@ -50,12 +46,15 @@
 									dense></v-textarea>
 					</v-col>
 
-					<v-col cols="5">
+					<v-col cols="8">
 						<v-file-input accept="image/png, image/jpeg, image/gif"
-									show-size
-									label="Image" ref="imageUploader" id="imageUploader"
+									show-size dense label="Image" 
+									ref="imageUploader" id="imageUploader"
 									:loading="isLoading"
-									:disabled="isLoading || !canPressUpload" dense></v-file-input>
+									:disabled="isLoading || !canPressUpload"></v-file-input>
+					</v-col>
+					<v-col>
+						<v-checkbox v-model="form.spoilerImage" dense label="Spoiler"></v-checkbox>
 					</v-col>
 
 					<v-col cols="12">
@@ -109,13 +108,17 @@
 				return null;
 			},
 			latestPostId() {
-				if (this.mode === 'post') {
-					const refArr = Object.keys(this.$parent.$refs).filter(x => x.startsWith('post-'));
-					const latestRef = refArr[refArr.length - 1];
-					// return only the post id
-					return latestRef.replace( /\D+/g, '');
+				const refArr = Object.keys(this.$refs).filter(x => x.startsWith('post-'));
+				var highestId = 0;
+
+				// iterate over all refs and keep increasing 'highestId' until no higher id occurs
+				for (const ref of refArr) {
+					const id = parseInt(ref.replace( /\D+/g, ''));
+					if (id > highestId) {
+						highestId = id;
+					}
 				}
-				return null;
+				return highestId;
 			}
 		},
 		data() {
@@ -148,7 +151,7 @@
 				formData.append('file', imageUploader.files[0]);
 				this.isLoading = true;
 				this.canPressUpload = false;
-				axios.post(this.getAPIUrl() + 'image/upload',
+				axios.post(this.$getAPIUrl() + 'image/upload',
 					formData,
 					{
 						headers: {
@@ -188,7 +191,7 @@
 				this.isPostingLoading = true;
 
 				// construct url
-				let url = this.getAPIUrl() + this.board;
+				let url = this.$getAPIUrl() + this.board;
 				if (this.mode === 'post') {
 					url += '/thread/' + this.threadId;
 				}
@@ -212,11 +215,11 @@
 				}
 
 				this.errorMessage = 'Posted successfully - you will be redirected soon.';
-				await this.sleep(1500);
+				await this.$sleep(1500);
 
 
 				// mark this post as yours
-				this.updateLocalStorageJson(this.board + '_userPosts', postId);
+				this.$updateLocalStorageJson(this.board + '_userPosts', postId);
 
 				// if it's a thread response, update posts in thread
 				if (this.mode === 'post') {
