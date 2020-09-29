@@ -18,9 +18,6 @@ NetChan uses Vue.js 2 as a display layer and Webpack as a server.
  - Marking your own posts
  - Making threads/posts
 
-### Partially done
-- ...
-
 ### To do
 - Deleting posts
 - Administration panel
