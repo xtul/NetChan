@@ -11,19 +11,16 @@ NetChan uses Vue.js 2 as a display layer and Webpack as a server.
  - Reading boards and their pages, threads
  - "Classic" and Catalog board view
  - Quoting *(greentext)*
+ - Posting protected by hCaptcha
  - Viewing user-posted images and their thumbnails
  - Frontpage with a board list and 
  - Posting images
  - Marking your own posts
  - Making threads/posts
 
-### Partially done
-- Hiding threads *(only default board mode)*
-
 ### To do
 - Deleting posts
 - Administration panel
-- Captcha
 - ...
 
 # Contributing
