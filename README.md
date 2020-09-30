@@ -9,19 +9,26 @@ NetChan uses Vue.js 2 as a display layer and Webpack as a server.
 # Features
 ### Currently available
  - Reading boards and their pages, threads
- - "Classic" and Catalog board view
+ - "Classic" board view
  - Quoting *(greentext)*
- - Posting protected by hCaptcha
  - Viewing user-posted images and their thumbnails
- - Frontpage with a board list and 
+ - Frontpage with a board list, welcome info and news
  - Posting images
- - Marking your own posts
  - Making threads/posts
+ - Posting protected by hCaptcha
+ - Your posts are automatically marked
+ - Manual and automatic thread updating
+
+### Partially done
+ - Catalog view *(visually inferior to classic)*
 
 ### To do
-- Deleting posts
-- Administration panel
-- ...
+ - Ability to play a sound effect on new posts
+ - Text formatting for higher level posters *(moderators, administrators)*
+ - Basic BBCode-like text formatting for everyone *(such as \[spoiler], \[code])*
+ - Deleting posts
+ - Administration tools *(API needs proper IS4 implementation)*
+ - ...
 
 # Contributing
 
