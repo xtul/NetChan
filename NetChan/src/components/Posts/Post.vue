@@ -40,7 +40,7 @@
 					{{ post.id }}
 				</span>
 				<span class="actions">
-					[!]
+					[<a v-on:click="openReportForm(post.id)">Report</a>]
 				</span>
 			</p>
 			<span class="content">
@@ -104,6 +104,11 @@
         	}
     	},
 		methods: {
+			openReportForm(id) {
+				const reportForm = this.$parent.$refs.reportForm;
+				reportForm.opened = true;
+				reportForm.form.postId = id;
+			},
 			prettyDate: (date) => {
 				const providedDate = moment.utc(date);
 				const formattedDate = moment(providedDate).local();

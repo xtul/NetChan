@@ -1,6 +1,7 @@
 <template>
 	<v-row no-gutters>
 		<PostForm ref="postForm" />
+		<ReportForm ref="reportForm" />
 		<v-col cols="2" v-for="thread in boardData.threads" :key="thread.id" class="card">
 			<div :ref="'post-' + thread.id" class="op">
 				<div class="image">

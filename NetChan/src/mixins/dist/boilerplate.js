@@ -47,6 +47,18 @@ exports.boilerplate = {
                 var newArray = [newItem];
                 localStorage.setItem(key, JSON.stringify(newArray));
             }
+        },
+        $getElementInsideElement: function (baseElement, wantedElementName) {
+            var elementToReturn;
+            for (var i = 0; i < baseElement.childNodes.length; i++) {
+                elementToReturn = baseElement.childNodes[i];
+                if (elementToReturn.name == wantedElementName) {
+                    return elementToReturn;
+                }
+                else {
+                    return this.$getElementInsideElement(elementToReturn, wantedElementName);
+                }
+            }
         }
     }
 };

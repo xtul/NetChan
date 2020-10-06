@@ -24,12 +24,13 @@
 				</v-col>
 				<v-col cols="12" class="thread">
 					<PostForm v-if="boardData.threads[0].archived === false" ref="postForm" />
+					<ReportForm ref="reportForm" />
 					<div v-for="(post, index) in threadData.posts" :key="post.id">
 						<div v-if="index === 0" class="op" :id="'post-' + post.id">
-							<Post :ref="'post-' + post.id" :post="post" mode="op" :board="params.board" />
+							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="op" :board="params.board" />
 						</div>
 						<div v-else class="response" :class="'thread-' + threadData.posts[0].id" :id="'post-' + post.id">
-							<Post :ref="'post-' + post.id" :post="post" mode="response" :board="params.board" />
+							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="response" :board="params.board" />
 						</div>
 					</div>
 				</v-col>
@@ -37,16 +38,28 @@
 			<v-row>
 				<v-col cols=12>
 					<hr/>
-					<div class="nav" v-if="boardData.threads[0].archived === false">
-						[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]&nbsp;
-						[<a ref="updateThread" v-on:click="updateThread">Update</a>]
-						[<input type="checkbox" v-model="autoUpdate.enabled" v-on:click="toggleTimer()"><a v-on:click="autoUpdate.enabled = !autoUpdate.enabled; toggleTimer()">Auto</a>]
-						<template v-if="autoUpdate.enabled">
-							{{ autoUpdate.timer }}
-						</template>
-						<span style="padding-left:.2rem" v-if="autoUpdate.message != null">
-							{{autoUpdate.message}}
-						</span>
+					<div style="display: flex; justify-content: space-between">
+						<div class="nav" v-if="boardData.threads[0].archived === false">
+							[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]&nbsp;
+							[<a ref="updateThread" v-on:click="updateThread">Update</a>]&nbsp;
+							[
+							<div v-on:click="autoUpdate.enabled = !autoUpdate.enabled; toggleTimer()">
+								<input type="checkbox" v-model="autoUpdate.enabled"><a>Auto</a>
+							</div>
+							]
+							<template v-if="autoUpdate.enabled">
+								{{ autoUpdate.timer }}
+							</template>
+							<span style="padding-left:.2rem" v-if="autoUpdate.message != null">
+								{{autoUpdate.message}}
+							</span>
+						</div>
+						<div class="nav nav-right">
+							<span title="Replies">{{threadData.data.responseCount}}</span> <span class="pad-lr">/</span>
+							<span title="Images">{{threadData.data.imageCount}}</span> <span class="pad-lr">/</span>
+							<span title="Posters">{{threadData.data.uniquePosters}}</span> <span class="pad-lr">/</span>
+							<span title="Page">{{threadData.data.page}}</span>
+						</div>
 					</div>
 					<hr/>
 					<h2 v-if="boardData.threads[0].archived">This thread is closed.</h2>
@@ -62,6 +75,7 @@
 	import BoardHeader from '@/components/Details/BoardHeader.vue';
 	import BoardPages from '@/components/Details/BoardPages.vue';
 	import PostForm from '@/components/Forms/PostForm.vue';
+	import ReportForm from '@/components/Forms/ReportForm.vue';
 	import Post from '@/components/Posts/Post.vue';
 	import { postFinder } from '@/mixins/postFinder.ts';
 	import router from '../router';
@@ -71,7 +85,7 @@
 		name: 'MainThread',
 		data() {
 			return {
-				threadData: {},
+				threadData: new Set(),
 				autoUpdate: {
 					enabled: false,
 					timer: 20,
@@ -82,12 +96,12 @@
 		},
 		computed: {
 			latestPostId() {
-				const refArr = Object.keys(this.$refs).filter(x => x.startsWith('post-'));
+				const refArr = document.querySelectorAll('[name^=post-]');
 				var highestId = 0;
 
 				// iterate over all refs and keep increasing 'highestId' until no higher id occurs
 				for (const ref of refArr) {
-					const id = parseInt(ref.replace( /\D+/g, ''));
+					const id = parseInt(ref.getAttribute('name').replace( /\D+/g, ''));
 					if (id > highestId) {
 						highestId = id;
 					}
@@ -98,7 +112,7 @@
 		watch: {
 			autoUpdate: {
 				handler: function(newValue) {
-					if (newValue.timer === 0) {
+					if (this.autoUpdate.timer === 0) {
 						this.updateThread(null);
 					}
 				},
@@ -110,6 +124,7 @@
 			BoardHeader,
 			BoardPages,
 			PostForm,
+			ReportForm,
 			Post
 		},
 		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
@@ -155,13 +170,15 @@
 				var failed = false;
 				await axios.get(this.$getAPIUrl() + this.params.board + '/thread/' + this.params.threadId + '/' + this.latestPostId)
 						.then((response) => {
-							const newPosts = response.data;
+							const newPosts = response.data.posts;
 							const oldPosts = this.threadData.posts;
 
 							for (const post of newPosts) {
-								if (!oldPosts.includes(post)) {
-									oldPosts.push(post);
+								// prevent duplicate entries
+								if (oldPosts.find(x => x.id === post.id)) {
+									continue;
 								}
+								this.threadData.posts.push(post);
 							}
 
 							if (newPosts.length === 1) {
@@ -172,6 +189,9 @@
 
 							// reset bounceback since it looks like there's activity
 							this.autoUpdate.timerBounceback = 20;
+
+							// also update thread info
+							this.threadData.data = response.data.data;
 						})
 						.catch(() => {
 							failed = true;

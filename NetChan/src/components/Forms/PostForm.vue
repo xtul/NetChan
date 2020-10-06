@@ -108,12 +108,12 @@
 				return null;
 			},
 			latestPostId() {
-				const refArr = Object.keys(this.$refs).filter(x => x.startsWith('post-'));
+				const refArr = document.querySelectorAll('[name^=post-]');
 				var highestId = 0;
 
 				// iterate over all refs and keep increasing 'highestId' until no higher id occurs
 				for (const ref of refArr) {
-					const id = parseInt(ref.replace( /\D+/g, ''));
+					const id = parseInt(ref.getAttribute('name').replace( /\D+/g, ''));
 					if (id > highestId) {
 						highestId = id;
 					}
@@ -169,7 +169,7 @@
 				this.isLoading = false;
 			},
 			captchaOnVerify(event) {
-				const code = document.getElementsByName('h-captcha-response')[0].value;
+				const code = document.getElementsByName("postForm")[0].getElementsByName('h-captcha-response')[0].value;
 				this.form.captchaCode = code;
 			},
 			captchaOnExpired(event) {
@@ -223,18 +223,7 @@
 
 				// if it's a thread response, update posts in thread
 				if (this.mode === 'post') {
-					await axios.get(url + '/' + this.latestPostId)
-						.then((response) => {
-							const newPosts = response.data;
-							const oldPosts = this.$parent.threadData.posts;
-
-							for (const post of newPosts) {
-								if (!oldPosts.includes(post)) {
-									oldPosts.push(post);
-								}
-							}
-						})
-						.catch();
+					await this.$parent.updateThread(null);
 					this.errorMessage = '';					
 					document.getElementById('post-' + postId).scrollIntoView();
 

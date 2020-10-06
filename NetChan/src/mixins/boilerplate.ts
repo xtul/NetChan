@@ -43,6 +43,17 @@
 				const newArray: Array<any> = [newItem];
 				localStorage.setItem(key, JSON.stringify(newArray));
 			}
+		},
+		$getElementInsideElement(baseElement: any, wantedElementName: any): any {
+			var elementToReturn;
+			for (var i = 0; i < baseElement.childNodes.length; i++) {
+				elementToReturn = baseElement.childNodes[i];
+				if (elementToReturn.name == wantedElementName) {
+					return elementToReturn;
+				} else {
+					return this.$getElementInsideElement(elementToReturn, wantedElementName);
+				}
+			}
 		}
 	}
 };
