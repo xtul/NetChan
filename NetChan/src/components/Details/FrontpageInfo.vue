@@ -1,7 +1,15 @@
-<template>	
-	<p>
-		{{ message }}
-	</p>
+<template>
+	<span>
+		<div class="content" v-for="(line, index) in splitIntoLines(message)" :key="index">
+			<template v-if="line.startsWith('>')">
+				<span class="quote">{{line}}</span>
+			</template>
+			<template v-else>
+				{{line}}
+			</template>
+			<br>
+		</div>
+	</span>
 </template>
 
 <script>
@@ -22,5 +30,10 @@
 					this.message = data.message;
 				});
 		},
+		methods: {
+			splitIntoLines(message) {
+				return message.replace(/(\r\n|\r|\n){2,}/g, '$1\n').split('\n');
+			}
+		}
 	};
 </script>

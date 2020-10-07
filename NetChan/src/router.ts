@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Board from './views/Board.vue';
 import Thread from './views/Thread.vue';
+import ReportForm from './components/Forms/ReportForm.vue';
 
 Vue.use(Router);
 
@@ -22,6 +23,11 @@ export default new Router({
 			path: '/',
 			name: 'home',
 			component: Home,
+		},
+		{
+			path: '/:board/report',
+			name: 'report',
+			component: ReportForm
 		},
 		{
 			path: '/:board',

@@ -1,16 +1,13 @@
 <template>
 	<v-container fluid no-gutters>
 		<BoardHeader />
-		<v-layout column align-center>
-			<a href="/">
-				<img src="../assets/logo.png" class="logo" />
-			</a>
-		</v-layout>
+		<Logo />
 		<v-container no-gutters fluid v-if="boardExists === true">
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ this.params.board }}/ - {{ boardName }}</h1>
 					<h2>[<a v-on:click="openPostingForm">Start a New Thread</a>]</h2>
+					<p class="small" style="text-align:center;">All content posted by users is their responsibility.</p>
 					<hr />
 				</v-col>
 				<template v-if="mode === 'catalog' || mode === 'archive'">

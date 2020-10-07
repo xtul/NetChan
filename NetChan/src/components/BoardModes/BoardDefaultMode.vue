@@ -1,7 +1,6 @@
 <template>
 	<v-row>
 		<PostForm ref="postForm" />
-		<ReportForm ref="reportForm" />
 		<v-col cols="12">
 			<div v-for="thread in boardData.threads" :key="thread.id" class="thread">
 				<div class="hiddenOverlay" :ref="'overlay-' + thread.id"></div>

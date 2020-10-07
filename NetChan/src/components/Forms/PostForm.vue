@@ -12,7 +12,7 @@
 						<span class="small">Closing posting panel will not discard your changes unless you navigate to a different page.</span>
 					</v-col>
 					<v-col cols="3" lg="1" class="close" v-on:click="opened = false">
-						<span class="exit">[</span>X<span class="exit">]</span>
+						<v-icon>mdi-close-thick</v-icon>
 					</v-col>
 
 					<v-col v-if="errorMessage !== ''" cols="12">
@@ -169,7 +169,7 @@
 				this.isLoading = false;
 			},
 			captchaOnVerify(event) {
-				const code = document.getElementsByName("postForm")[0].getElementsByName('h-captcha-response')[0].value;
+				const code = document.getElementsByName('h-captcha-response')[0].value;
 				this.form.captchaCode = code;
 			},
 			captchaOnExpired(event) {
@@ -216,10 +216,6 @@
 
 				this.errorMessage = 'Posted successfully - you will be redirected soon.';
 				await this.$sleep(1500);
-
-
-				// mark this post as yours
-				this.$updateLocalStorageJson(this.board + '_userPosts', postId);
 
 				// if it's a thread response, update posts in thread
 				if (this.mode === 'post') {

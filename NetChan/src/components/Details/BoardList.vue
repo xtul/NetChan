@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<div v-for="(fullname, board) in boards">
-			<a v-bind:href="'/'+ board + '/'">/{{board}}/ - {{fullname}}</a>
+		<div v-for="(fullname, board, index) in boards" :key="index">
+			<router-link :to="{ name: 'board', params: { board: board }}">/{{board}}/ - {{fullname}}</router-link>
 		</div>
 	</div>
 </template>
@@ -24,9 +24,3 @@
 	};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-a {
-	color: #42b983;
-}
-</style>

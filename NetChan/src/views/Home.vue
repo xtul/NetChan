@@ -1,8 +1,6 @@
 <template>
 	<v-container fluid>
-		<v-layout column align-center>
-			<img src="../assets/logo.png" class="logo" />
-		</v-layout>
+		<Logo />
 		<v-layout column align-center>
 			<v-row>
 				<v-col cols="12">

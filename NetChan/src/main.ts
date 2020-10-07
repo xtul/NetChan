@@ -16,6 +16,10 @@ Vue.filter('date', dateFilter);
 
 Vue.mixin(boilerplate);
 
+Vue.component('Logo',
+	() => import('./components/Details/Logo.vue')
+);
+
 new Vue({
 	vuetify,
 	router,

@@ -3,8 +3,9 @@
 		<div class="filename">
 			<template v-if="post.image != null">
 				<template v-if="$route.name !== 'thread'">
-					<a v-if="mode === 'op' && hidden === false" v-on:click="hideThread(post.id)">[x]&nbsp;</a>
-					<a v-if="mode === 'op' && hidden === true" v-on:click="hideThread(post.id)">[+]&nbsp;</a>
+					<v-icon v-if="mode === 'op' && hidden === false" v-on:click="hideThread(post.id)" small dense>mdi-close-thick</v-icon>
+					<v-icon v-if="mode === 'op' && hidden === true" v-on:click="hideThread(post.id)" small dense>mdi-hospital</v-icon>
+					<span>&nbsp;|&nbsp;</span>
 				</template>
 				<a v-if="hidden === false" target="_blank" rel="noopener noreferrer" :href="post.image" :title="getFilename(post.image)">{{ getFilename(post.image) | truncate(16) }}</a>
 			</template>
@@ -40,7 +41,10 @@
 					{{ post.id }}
 				</span>
 				<span class="actions">
-					[<a v-on:click="openReportForm(post.id)">Report</a>]
+					<v-icon v-if="post.sticky" title="Sticky" small dense>mdi-pin</v-icon>
+					<v-icon v-if="isPastLimits" title="Past board limits" small dense>mdi-lock</v-icon>
+					<v-icon v-if="post.archived" title="Archived" small dense>mdi-archive</v-icon>
+					<v-icon v-on:click="openReportForm(post.id)" title="Report this post" small dense>mdi-exclamation-thick</v-icon>
 				</span>
 			</p>
 			<span class="content">
@@ -102,12 +106,25 @@
 
 				return shortenedText;
         	}
-    	},
+		},
+		computed: {
+			isPastLimits() {
+				if (this.$parent.threadData != null) {
+					if (this.$parent.threadData.data.pastLimits != 0) {
+						return true;
+					} else {
+						return false
+					}
+				} else {
+					return false;
+				}
+			}
+		},
 		methods: {
 			openReportForm(id) {
-				const reportForm = this.$parent.$refs.reportForm;
-				reportForm.opened = true;
-				reportForm.form.postId = id;
+				const url = '/' + this.board + '/report?id=' + id;
+				const windowName = '/' + this.board + '/ - Report post'
+				const shit = window.open(url, windowName, "height=470,width=340");
 			},
 			prettyDate: (date) => {
 				const providedDate = moment.utc(date);
@@ -115,9 +132,6 @@
 				return formattedDate.format('D/M/YYYY (ddd) HH:mm:ss') + ' (' + moment(formattedDate).fromNow() + ')';
 			},
 			cleanup: (str) => {
-				if (str.length > 255) {
-					str = str + '\nContent too long. <a href="#">Click here</a> to load full post.';
-				}
 				return str.replace(/(\r\n|\r|\n){2,}/g, '$1\n').split('\n');
 			},
 			getThumbnailUri: (uri) => {

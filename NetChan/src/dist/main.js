@@ -14,6 +14,7 @@ var boilerplate_1 = require("@/mixins/boilerplate");
 vue_1["default"].config.productionTip = true;
 vue_1["default"].filter('date', date_filter_1["default"]);
 vue_1["default"].mixin(boilerplate_1.boilerplate);
+vue_1["default"].component('Logo', function () { return Promise.resolve().then(function () { return require('./components/Details/Logo.vue'); }); });
 new vue_1["default"]({
     vuetify: vuetify_1["default"],
     router: router_1["default"],

@@ -1,17 +1,14 @@
 <template>
 	<v-container fluid no-gutters>
 		<BoardHeader />
-		<v-layout column align-center>
-			<a href="/">
-				<img src="../assets/logo.png" class="logo" />
-			</a>
-		</v-layout>
+		<Logo />
 		<v-container no-gutters fluid>
 			<v-row>
 				<v-col cols="12">
 					<h1>/{{ params.board }}/ - {{ boardName }}</h1>
-					<h2 v-if="boardData.threads[0].archived">This thread is closed.</h2>
+					<h2 v-if="threadData.posts[0].archived">This thread is closed.</h2>
 					<h2 v-else>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
+					<p class="small" style="text-align:center;">All content posted by users is their responsibility.</p>
 					<hr />
 				</v-col>
 			</v-row>
@@ -23,8 +20,7 @@
 					<hr />
 				</v-col>
 				<v-col cols="12" class="thread">
-					<PostForm v-if="boardData.threads[0].archived === false" ref="postForm" />
-					<ReportForm ref="reportForm" />
+					<PostForm v-if="threadData.posts[0].archived === false" ref="postForm" />
 					<div v-for="(post, index) in threadData.posts" :key="post.id">
 						<div v-if="index === 0" class="op" :id="'post-' + post.id">
 							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="op" :board="params.board" />
@@ -39,7 +35,7 @@
 				<v-col cols=12>
 					<hr/>
 					<div style="display: flex; justify-content: space-between">
-						<div class="nav" v-if="boardData.threads[0].archived === false">
+						<div class="nav" v-if="threadData.posts[0].archived === false">
 							[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]&nbsp;
 							[<a ref="updateThread" v-on:click="updateThread">Update</a>]&nbsp;
 							[
@@ -62,8 +58,9 @@
 						</div>
 					</div>
 					<hr/>
-					<h2 v-if="boardData.threads[0].archived">This thread is closed.</h2>
+					<h2 v-if="threadData.posts[0].archived">This thread is closed.</h2>
 					<h2 v-else>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
+					<p class="small" style="text-align:center;">All content posted by users is their responsibility.</p>
 				</v-col>
 			</v-row>
 		</v-container>
@@ -75,7 +72,6 @@
 	import BoardHeader from '@/components/Details/BoardHeader.vue';
 	import BoardPages from '@/components/Details/BoardPages.vue';
 	import PostForm from '@/components/Forms/PostForm.vue';
-	import ReportForm from '@/components/Forms/ReportForm.vue';
 	import Post from '@/components/Posts/Post.vue';
 	import { postFinder } from '@/mixins/postFinder.ts';
 	import router from '../router';
@@ -124,7 +120,6 @@
 			BoardHeader,
 			BoardPages,
 			PostForm,
-			ReportForm,
 			Post
 		},
 		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
@@ -146,8 +141,8 @@
 							x.classList.add('notfound');
 						}
 					}
-
-					if (JSON.parse(localStorage.getItem(this.params.board + '_userPosts').includes(id))) {
+					
+					if (this.$refs['post-' + id][0].post.you) {
 						if (!x.innerHTML.includes(' (You)')) {
 							x.innerHTML += ' (You)';
 						}

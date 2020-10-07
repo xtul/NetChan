@@ -1,50 +1,36 @@
 <template>
-	<v-navigation-drawer
-		v-show="opened"
-        right permanent fixed
-		width="auto"
-		class="form"
-	>
+	<v-container style="background-color:rgba(255, 255, 255, 0.73);" :disabled="isPostingLoading">
 		<v-form name="reportForm" id="reportForm">
-			<v-container style="padding:0;" fluid :disabled="isPostingLoading">
-				<v-row dense>
-					<v-col cols="9" lg="11" style="margin-bottom:20px;">
-						<span class="small">Closing posting panel will not discard your changes unless you navigate to a different page.</span>
-					</v-col>
-					<v-col cols="3" lg="1" class="close" v-on:click="opened = false">
-						<span class="exit">[</span>X<span class="exit">]</span>
-					</v-col>
+			<v-row dense>
+				<v-col v-if="errorMessage !== ''" cols="12">
+					<p class="error">{{ errorMessage }}</p>
+				</v-col>
 
-					<v-col v-if="errorMessage !== ''" cols="12">
-						<p class="error">{{ errorMessage }}</p>
-					</v-col>
+				<v-col cols="12">
+					<v-text-field :counter="32"
+								placeholder="Post ID"
+								v-model="form.postId"
+								label="Post ID" dense></v-text-field>
+				</v-col>
 
-					<v-col cols="12">
-						<v-text-field :counter="32"
-									placeholder="Post ID"
-									v-model="form.postId"
-									label="Post ID" dense></v-text-field>
-					</v-col>
+				<v-col cols="12">
+					<v-textarea label="Reason"
+								counter="128"
+								v-model="form.reason"
+								autofocus
+								dense></v-textarea>
+				</v-col>					
 
-					<v-col cols="12">
-						<v-textarea label="Reason"
-									counter="128"
-									v-model="form.reason"
-									autofocus
-									dense></v-textarea>
-					</v-col>					
+				<v-col cols="12">
+					<vue-hcaptcha @verify="captchaOnVerify" @expired="captchaOnExpired" class="h-captcha" sitekey="d041474a-cb4d-4a32-a789-0965db939327"></vue-hcaptcha>
+				</v-col>
 
-					<v-col cols="12">
-						<vue-hcaptcha @verify="captchaOnVerify" @expired="captchaOnExpired" class="h-captcha" sitekey="d041474a-cb4d-4a32-a789-0965db939327"></vue-hcaptcha>
-					</v-col>
-
-					<v-col style="min-height:54px;">
-						<v-btn :loading="isLoading" :disabled="isLoading" depressed tile block height="100%" v-on:click="submitForm" id="submitReportBtn">Report post</v-btn>
-					</v-col>
-				</v-row>
-			</v-container>
+				<v-col style="min-height:54px;">
+					<v-btn :loading="isLoading" :disabled="isLoading" depressed tile block height="100%" v-on:click="submitForm" id="submitReportBtn">Report post</v-btn>
+				</v-col>
+			</v-row>
 		</v-form>
-	</v-navigation-drawer>
+	</v-container>
 </template>
 
 <script>
@@ -67,7 +53,6 @@
 		},
 		data() {
 			return {
-				opened: false,
 				canPost: false,
 				isLoading: false,
 				isPostingLoading: false,
@@ -81,10 +66,12 @@
 				}
 			};
 		},
+		mounted() {
+			this.form.postId = this.$route.query.id;
+		},
 		methods: {
 			captchaOnVerify(event) {
-				console.log(this.$getElementInsideElement(document.getElementById('reportForm'), 'h-captcha-response'));
-				const code = document.getElementById('reportForm').getElementsByName('h-captcha-response')[0].value;
+				const code = document.getElementsByName('h-captcha-response')[0].value;
 				this.form.captchaCode = code;
 			},
 			captchaOnExpired(event) {
@@ -115,16 +102,10 @@
 				await axios.post(url, this.form)
 					.then()
 					.catch((err) => {
-						this.errorMessage = err;
-						postingFailed = true;
 					});
-				this.isPostingLoading = false;
-
-				if (postingFailed) {
-					return;
-				}
-
-				this.errorMessage = 'Reported successfully.';
+				
+				this.$sleep(1000);
+				window.close();
 			}
 		}
 	};

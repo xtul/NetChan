@@ -5,6 +5,7 @@ var vue_router_1 = require("vue-router");
 var Home_vue_1 = require("./views/Home.vue");
 var Board_vue_1 = require("./views/Board.vue");
 var Thread_vue_1 = require("./views/Thread.vue");
+var ReportForm_vue_1 = require("./components/Forms/ReportForm.vue");
 vue_1["default"].use(vue_router_1["default"]);
 exports["default"] = new vue_router_1["default"]({
     mode: 'history',
@@ -22,6 +23,11 @@ exports["default"] = new vue_router_1["default"]({
             path: '/',
             name: 'home',
             component: Home_vue_1["default"]
+        },
+        {
+            path: '/:board/report',
+            name: 'report',
+            component: ReportForm_vue_1["default"]
         },
         {
             path: '/:board',
