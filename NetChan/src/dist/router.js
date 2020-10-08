@@ -22,12 +22,18 @@ exports["default"] = new vue_router_1["default"]({
         {
             path: '/',
             name: 'home',
-            component: Home_vue_1["default"]
+            component: Home_vue_1["default"],
+            meta: {
+                title: 'Home'
+            }
         },
         {
             path: '/:board/report',
             name: 'report',
-            component: ReportForm_vue_1["default"]
+            component: ReportForm_vue_1["default"],
+            meta: {
+                title: 'Report post'
+            }
         },
         {
             path: '/:board',
@@ -61,7 +67,10 @@ exports["default"] = new vue_router_1["default"]({
         {
             path: '/*',
             name: 'notfound',
-            component: Board_vue_1["default"]
+            component: Board_vue_1["default"],
+            meta: {
+                title: 'Not found'
+            }
         },
     ]
 });

@@ -2,11 +2,11 @@
 	<v-row no-gutters>
 		<v-col cols="12" class="boards">
 			[ 
-			<template v-for="(boardlong, board, index) in boards">
+			<span v-for="(boardlong, board, index) in boards" :key="index">
 				<p v-if="board === currentBoard">&nbsp;<span class="currentBoard">{{board}}</span>&nbsp;</p>
-				<p v-else>&nbsp;<a class="board" :href="'/' + board">{{board}}</a>&nbsp;</p>
+				<p v-else>&nbsp;<router-link class="board" :to="{ name: 'board', params: { board: board }}">{{board}}</router-link>&nbsp;</p>
 				<p v-if="index !== -1 && index !== Object.values(boards).length - 1">&nbsp;/</p>
-			</template>
+			</span>
 			 ]
 		</v-col>
 	</v-row>
@@ -19,8 +19,8 @@
 	export default {
 		name: 'BoardHeader',
 		computed: {
-			currentBoard: () => {
-				return router.currentRoute.fullPath.split('/')[1];
+			currentBoard() {
+				return this.$route.params.board;
 			},
 		},
 		data() {

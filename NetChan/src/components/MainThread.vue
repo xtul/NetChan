@@ -5,7 +5,7 @@
 		<v-container no-gutters fluid>
 			<v-row>
 				<v-col cols="12">
-					<h1>/{{ params.board }}/ - {{ boardName }}</h1>
+					<h1>/{{ $route.params.board }}/ - {{ boardName }}</h1>
 					<h2 v-if="threadData.posts[0].archived">This thread is closed.</h2>
 					<h2 v-else>[<a v-on:click="openPostingForm">Respond to this thread</a>]</h2>
 					<p class="small" style="text-align:center;">All content posted by users is their responsibility.</p>
@@ -15,7 +15,7 @@
 			<v-row>
 				<v-col cols="12">
 					<div class="nav">
-						[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]
+						[<router-link :to="{ name: 'board', params: { board: $route.params.board }}">Return</router-link>]
 					</div>
 					<hr />
 				</v-col>
@@ -23,10 +23,10 @@
 					<PostForm v-if="threadData.posts[0].archived === false" ref="postForm" />
 					<div v-for="(post, index) in threadData.posts" :key="post.id">
 						<div v-if="index === 0" class="op" :id="'post-' + post.id">
-							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="op" :board="params.board" />
+							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="op" :board="$route.params.board" />
 						</div>
 						<div v-else class="response" :class="'thread-' + threadData.posts[0].id" :id="'post-' + post.id">
-							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="response" :board="params.board" />
+							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="response" :board="$route.params.board" />
 						</div>
 					</div>
 				</v-col>
@@ -36,7 +36,7 @@
 					<hr/>
 					<div style="display: flex; justify-content: space-between">
 						<div class="nav" v-if="threadData.posts[0].archived === false">
-							[<router-link :to="{ name: 'board', params: { board: params.board }}">Return</router-link>]&nbsp;
+							[<router-link :to="{ name: 'board', params: { board: $route.params.board }}">Return</router-link>]&nbsp;
 							[<a ref="updateThread" v-on:click="updateThread">Update</a>]&nbsp;
 							[
 							<div v-on:click="autoUpdate.enabled = !autoUpdate.enabled; toggleTimer()">
@@ -69,7 +69,6 @@
 </template>
 
 <script>
-	import BoardHeader from '@/components/Details/BoardHeader.vue';
 	import BoardPages from '@/components/Details/BoardPages.vue';
 	import PostForm from '@/components/Forms/PostForm.vue';
 	import Post from '@/components/Posts/Post.vue';
@@ -81,7 +80,6 @@
 		name: 'MainThread',
 		data() {
 			return {
-				threadData: new Set(),
 				autoUpdate: {
 					enabled: false,
 					timer: 20,
@@ -117,12 +115,11 @@
 		},
 		mixins: [postFinder],
 		components: {
-			BoardHeader,
 			BoardPages,
 			PostForm,
 			Post
 		},
-		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
+		props: ['catalog', 'archive', 'boardName', 'boardExists', 'threadData'],
 		async updated() {
 			const replyLinks = document.getElementsByClassName('reply');
 
@@ -135,14 +132,16 @@
 					}
 
 					if (this.$refs['post-' + id] == null) {
-						const exists = await this.postExists(id, this.params.board);
+						const exists = await this.postExists(id, this.$route.params.board);
 						if (exists === false) {
 							x.classList.remove('reply');
 							x.classList.add('notfound');
 						}
 					}
 					
-					if (this.$refs['post-' + id][0].post.you) {
+					// null check needed for external thread links
+					if (this.$refs['post-' + id] != null 
+					&& this.$refs['post-' + id][0].post.you) {
 						if (!x.innerHTML.includes(' (You)')) {
 							x.innerHTML += ' (You)';
 						}
@@ -163,7 +162,7 @@
 			async updateThread(e) {
 				this.autoUpdate.message = 'Fetching...';
 				var failed = false;
-				await axios.get(this.$getAPIUrl() + this.params.board + '/thread/' + this.params.threadId + '/' + this.latestPostId)
+				await axios.get(this.$getAPIUrl() + this.$route.params.board + '/thread/' + this.$route.params.threadId + '/' + this.latestPostId)
 						.then((response) => {
 							const newPosts = response.data.posts;
 							const oldPosts = this.threadData.posts;
@@ -214,17 +213,6 @@
 					}
 					this.autoUpdate.timer -= 1;
 				}	
-			}
-		},
-		async beforeMount() {
-			// get thread info
-			if (this.boardName !== 'none') {
-				await axios
-					.get(this.$getAPIUrl() + this.params.board + '/thread/' + this.params.threadId)
-					.then((response) => {
-						this.threadData = response.data;
-					})
-					.catch();
 			}
 		}
 	};

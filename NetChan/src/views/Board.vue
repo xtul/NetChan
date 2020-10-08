@@ -1,5 +1,8 @@
 <template>
-	<div v-if="loading === false">
+	<div v-if="loading">
+		<Loading />
+	</div>
+	<div v-else>
 		<MainBoard 
 			v-if="boardExists"
 			:params="this.$route.params" 
@@ -9,25 +12,16 @@
 		/>
 		<NotFound v-else :message="errorMsg"/>
 	</div>
-	<div v-else>
-		<p>loading...</p>
-	</div>
+	
 </template>
 
 <script>
-	import { Component, Vue } from 'vue-property-decorator';
 	import router from '../router';
 	import axios from 'axios';
 	import MainBoard from '@/components/MainBoard.vue';
 	import NotFound from '@/components/Details/NotFound.vue';
 
-	@Component({
-		components: {
-			MainBoard,
-			NotFound
-		}
-	})
-	export default class Board extends Vue {
+	export default {
 		data() {
 			return {
 				boardName: 'none',
@@ -36,45 +30,65 @@
 				boardData: {},
 				loading: true
 			};
-		};
+		},
+		components: {
+			MainBoard,
+			NotFound
+		},
+		watch: {
+			$route: {
+				handler: function(to, from) {
+					this.getBoard();
+					document.title = '/' + to.params.board + '/ - NetChan';
+				},
+				deep: true
+			},
+		},
 		async mounted() {
-			const apiUrl = this.$getAPIUrl();
+			document.title = '/' + this.$route.params.board + '/ - NetChan';
+			await this.getBoard();
+		},
+		methods: {
+			async getBoard() {
+				const apiUrl = this.$getAPIUrl();
 
-			// make sure this board even exists, also get full board name
-			try {
+				// make sure this board even exists, also get full board name
+				try {
+					await axios
+						.get(apiUrl + this.$route.params.board)
+						.then((response) => {
+							this.boardName = response.data;
+							this.boardExists = true;
+						})
+						.catch((error) => {
+							this.errorMsg = error;
+							this.loading = false;
+						});
+				} catch {}
+
+
+				// if board exists, get threads
+				if (this.boardExists === false) {
+					return;
+				}
+				let page = this.$route.params.page;
+				if (page === undefined) {
+					page = '1';
+				}
 				await axios
-					.get(apiUrl + this.$route.params.board)
+					.get(apiUrl + this.$route.params.board + '/' + page)
 					.then((response) => {
-						this.boardName = response.data;
-						this.boardExists = true;
+						if (response.status === 404) {
+							this.boardData = {};
+						} else {
+							this.boardData = response.data;
+						}
 					})
-					.catch((error) => {
-						this.errorMsg = error;
-					});
-			} catch {}
+					.catch();
 
-
-			// if board exists, get threads
-			if (this.boardExists === false) {
-				return;
+				this.loading = false;
 			}
-			let page = this.$route.params.page;
-			if (page === undefined) {
-				page = '1';
-			}
-			await axios
-				.get(apiUrl + this.$route.params.board + '/' + page)
-				.then((response) => {
-					if (response.status === 404) {
-						this.boardData = {};
-					} else {
-						this.boardData = response.data;
-					}
-				})
-				.catch();
-				
-			this.loading = false;
-		};
+		}
 	}
 </script>
 

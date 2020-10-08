@@ -24,7 +24,7 @@
 		</figure>
 		<div class="text">
 			<p class="heading">
-				<span v-if="post.thread == null" class="subject">
+				<span v-if="post.thread === post.id || post.thread == null" class="subject">
 					{{ post.subject }}
 				</span>
 				<span class="name">
@@ -267,7 +267,6 @@
 					const postThread = await this.lookupThread(postId);
 					if (postThread !== false) {
 						router.push({ name: 'thread', params: { threadId: postThread }, hash: '#post-' + postId });
-						router.go({ name: 'thread', params: { threadId: postThread }, hash: '#post-' + postId });
 						return;
 					}
 				}

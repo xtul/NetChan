@@ -39,7 +39,6 @@
 </template>
 
 <script>
-	import BoardHeader from '@/components/Details/BoardHeader.vue';
 	import BoardPages from '@/components/Details/BoardPages.vue';
 	import BoardDefaultMode from '@/components/BoardModes/BoardDefaultMode.vue';
 	import BoardCatalogMode from '@/components/BoardModes/BoardCatalogMode.vue';
@@ -50,7 +49,6 @@
 	export default {
 		name: 'MainBoard',
 		components: {
-			BoardHeader,
 			BoardPages,
 			BoardDefaultMode,
 			BoardCatalogMode

@@ -17,17 +17,23 @@ export default new Router({
 			};
 		}
 		return { x: 0, y: 0 };
-	},
+	}, 
 	routes: [
 		{
 			path: '/',
 			name: 'home',
 			component: Home,
+			meta: {
+				title: 'Home'
+			}
 		},
 		{
 			path: '/:board/report',
 			name: 'report',
-			component: ReportForm
+			component: ReportForm,
+			meta: {
+				title: 'Report post'
+			}
 		},
 		{
 			path: '/:board',
@@ -62,6 +68,9 @@ export default new Router({
 			path: '/*',
 			name: 'notfound',
 			component: Board,
+			meta: {
+				title: 'Not found'
+			}
 		},
 	],
 });

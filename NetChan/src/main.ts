@@ -19,6 +19,12 @@ Vue.mixin(boilerplate);
 Vue.component('Logo',
 	() => import('./components/Details/Logo.vue')
 );
+Vue.component('BoardHeader',
+	() => import('./components/Details/BoardHeader.vue')
+);
+Vue.component('Loading',
+	() => import('./components/Details/Loading.vue')
+);
 
 new Vue({
 	vuetify,

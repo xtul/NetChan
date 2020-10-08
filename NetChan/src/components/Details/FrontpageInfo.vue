@@ -32,6 +32,7 @@
 		},
 		methods: {
 			splitIntoLines(message) {
+				if (message == null) return;
 				return message.replace(/(\r\n|\r|\n){2,}/g, '$1\n').split('\n');
 			}
 		}

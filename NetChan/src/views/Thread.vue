@@ -1,95 +1,87 @@
 <template>
-	<div v-if="loading === false">
-		<MainThread 
-			v-if="boardExists"
-			:params="this.$route.params" 
-			:boardName="boardName"
-			:boardExists="boardExists"
-			:boardData="boardData"
-		/>
-		<NotFound v-else/>
+	<div v-if="loading">
+		<Loading />
 	</div>
 	<div v-else>
-		<p>loading...</p>
-	</div>
-	
+		<MainThread 
+			v-if="threadExists"
+			:boardName="boardName"
+			:threadData="threadData"
+		/>
+		<NotFound v-else :message="errMessage"/>
+	</div>	
 </template>
 
-<script lang="ts">
-	import { Component, Vue } from 'vue-property-decorator';
+<script>
 	import MainThread from '@/components/MainThread.vue';
 	import NotFound from '@/components/Details/NotFound.vue';
 	import router from '../router';
 	import axios from 'axios';
 
-	@Component({
+	export default {
+		data() {
+			return {
+				boardName: 'none',
+				threadExists: false,
+				threadData: {},
+				errMessage: '',
+				loading: true
+			};
+		},
 		components: {
 			MainThread,
 			NotFound
 		},
-	})
-	export default class Thread extends Vue {
-		public data() {
-			return {
-				boardName: 'none',
-				boardExists: false,
-				threadExists: false,
-				boardData: {},
-				loading: true
-			};
-		}
-		private async mounted() {
+		watch: {
+			$route: {
+				handler: function(to, from) {
+					this.getThread();
+					document.title = '/' + to.params.board + '/ - NetChan';
+				},
+				deep: true
+			},
+		},
+		async mounted() {
 			const apiUrl = this.$getAPIUrl();
 
 			// make sure this thread even exists, also get full board name
 			const board = router.currentRoute.fullPath.split('/')[1];
-			try {
-				await axios
-					.get(apiUrl + this.$route.params.board)
-					.then((response) => {
-						this.boardName = response.data;
-						this.boardExists = true;
-					})
-					.catch();
-			} catch {}
-			try {
-				await axios
-					.get(apiUrl + this.$route.params.board)
-					.then((response) => {
-						this.boardName = response.data;
-						this.boardExists = true;
-					})
-					.catch();
-			} catch {}
+			await axios
+				.get(apiUrl + this.$route.params.board, { validateStatus: (status) => status === 200 })
+				.then((response) => {
+					this.boardName = response.data;
+				})
+				.catch((err) => {
+					this.errMessage = err;
+				});
+			
+			// get thread info
+			await this.getThread();
+
+			// update page title
+			const threadId = this.threadData.posts[0].id;
+			const subject = this.threadData.posts[0].subject || null;
+
+			if (subject != null) {
+				document.title = '/' + this.$route.params.board + '/' + this.threadData.posts[0].id + ' - ' + this.threadData.posts[0].subject +  ' - NetChan';
+			} else {
+				document.title = '/' + this.$route.params.board + '/' + this.threadData.posts[0].id + ' - NetChan';
+			}
 
 			this.loading = false;
-
-			// if board exists, get thread data
-			if (this.boardExists === false) {
-				return;
+		},
+		methods: {
+			async getThread() {
+				await axios
+					.get(this.$getAPIUrl() + this.$route.params.board + '/thread/' + this.$route.params.threadId)
+					.then((response) => {
+						this.threadData = response.data;
+						this.threadExists = true;
+					})
+					.catch((err) => {
+						this.errMessage = 'Thread doesn\'t exist.';
+					});
 			}
-			let page = this.$route.params.page;
-			if (page === undefined) {
-				page = '1';
-			}
-			await axios
-				.get(apiUrl + this.$route.params.board + '/' + page)
-				.then((response) => {
-					if (response.status === 404) {
-						this.boardData = {};
-					} else {
-						this.boardData = response.data;
-					}
-				})
-				.catch();
 		}
 	}
 </script>
-
-<style scoped>
-	.logo {
-		height: 128px;
-		margin-top: 16px;
-		margin-bottom: 48px;
-	}
-</style>
