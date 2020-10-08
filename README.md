@@ -23,7 +23,8 @@ NetChan uses Vue.js 2 as a display layer and Webpack as a server.
  - Catalog view *(visually inferior to classic)*
 
 ### To do
- - Ability to play a sound effect on new posts
+ - Thread list view *(no images, only subjects, last post etc.)*
+ - Togglable sound effect on new posts
  - Text formatting for higher level posters *(moderators, administrators)*
  - Basic BBCode-like text formatting for everyone *(such as \[spoiler], \[code])*
  - Deleting posts
