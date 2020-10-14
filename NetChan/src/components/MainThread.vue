@@ -25,8 +25,8 @@
 						<div v-if="index === 0" class="op" :id="'post-' + post.id">
 							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="op" :board="$route.params.board" />
 						</div>
-						<div v-else class="response" :class="'thread-' + threadData.posts[0].id" :id="'post-' + post.id">
-							<Post :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="response" :board="$route.params.board" />
+						<div v-else class="response" :class="{you: post.you}" :id="'post-' + post.id">
+							<Post :class="`thread-${threadData.posts[0].id}`" :ref="'post-' + post.id" :name="'post-' + post.id" :post="post" mode="response" :board="$route.params.board" />
 						</div>
 					</div>
 				</v-col>

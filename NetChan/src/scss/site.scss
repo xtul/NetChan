@@ -1,6 +1,7 @@
 ﻿$response: #eefaff;
 $response-b: darken($response, 11%);
 $response-r: darken($response, 16%);
+$response-l: darken($response, 20%);
 
 $greentext: #789922;
 
@@ -305,4 +306,8 @@ figcaption {
 .pad-lr {
 	padding-left:0.2rem;
 	padding-right:0.2rem;
+}
+
+.you {
+	border-left: 6px solid $response-l;
 }
