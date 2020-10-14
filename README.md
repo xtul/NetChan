@@ -20,12 +20,12 @@ NetChan uses Vue.js 2 as a display layer and Webpack as a server.
  - Manual and automatic thread updating
 
 ### Partially done
- - Catalog view *(visually inferior to classic)*
+ - Catalog view *(will be replaced by thread list view)*
 
 ### To do
  - Thread list view *(no images, only subjects, last post etc.)*
  - Togglable sound effect on new posts
- - Text formatting for higher level posters *(moderators, administrators)*
+ - Text formatting for higher level posters *(moderators, administrators - needs IS4 in API first)*
  - Basic BBCode-like text formatting for everyone *(such as \[spoiler], \[code])*
  - Deleting posts
  - Administration tools *(API needs proper IS4 implementation)*
