@@ -1,6 +1,8 @@
-﻿# NetChan
+![logo]
 
-NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) project. It is different to NetBoard in that it is stylized - NetChan is a website that will be available once the project is good enough, whereas NetBoard is a generic API provider. Same as NetBoard, it is a work-in-progress and many things are subject to change.
+# What is NetChan
+
+NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) project - an anonymous forum where registration is not required. It is a website that will be publicly available once this project covers all of NetBoard's functionality. Same as NetBoard, it is a work-in-progress and many things are subject to change.
 
 # Technology
 
@@ -40,3 +42,5 @@ Running this project requires Node.js (built on version 12) and Vue CLI.
 Open `NetChan` directory in the command line and run `npm run serve` to host a development server. You will also need to create a hardlink to the /wwwroot/img directory of [NetBoard](https://github.com/xtul/NetBoard) binary - in production, a load balancer such as Nginx should handle it.
 
 Additionally you may want to create a fake domain (eg. using hosts on Windows) - hCaptcha refuses to work on localhost.
+
+[logo]: https://raw.githubusercontent.com/xtul/NetBoard/master/NetBoard.Backend/wwwroot/img/logo.png "Logo"
