@@ -299,7 +299,7 @@ a<template>
 				if (post !== '0') {
 					const postThread = await this.lookupThread(post, board);
 					if (postThread !== false) {
-						router.push({ name: 'thread', params: { threadId: postThread }, hash: '#post-' + postId });
+						router.push({ name: 'thread', params: { board: board, threadId: postThread }, hash: '#post-' + post });
 						return;
 					}
 				} else {

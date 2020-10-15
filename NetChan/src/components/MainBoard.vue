@@ -10,16 +10,7 @@
 					<p class="small" style="text-align:center;">All content posted by users is their responsibility.</p>
 					<hr />
 				</v-col>
-				<template v-if="mode === 'archive'">
-					<v-col cols="12">
-						<div v-if="boardData.pageData" class="nav">
-							[<router-link :to="{ name: 'board' }">Return</router-link>]
-						</div>
-					</v-col>
-				</template>
-				<template v-else>
-					<BoardPages v-if="boardData.pageData" :pageCount="boardData.pageData.pageCount" :currentPage="boardData.pageData.currentPage" :currentBoard="params.board" />
-				</template>
+				<BoardPages v-if="boardData.pageData" :pageCount="boardData.pageData.pageCount" :currentPage="boardData.pageData.currentPage" :currentBoard="params.board" />
 				<v-col cols="12">
 					<hr style="margin:0;" />
 				</v-col>

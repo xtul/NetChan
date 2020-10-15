@@ -42,6 +42,12 @@ exports["default"] = new vue_router_1["default"]({
             props: { list: true }
         },
         {
+            path: '/:board/archive',
+            name: 'board-archive',
+            component: Board_vue_1["default"],
+            props: { archive: true }
+        },
+        {
             path: '/:board',
             name: 'board',
             component: Board_vue_1["default"],
@@ -50,12 +56,6 @@ exports["default"] = new vue_router_1["default"]({
                     path: ':page',
                     name: 'board-page',
                     component: Board_vue_1["default"]
-                },
-                {
-                    path: '/archive',
-                    name: 'board-archive',
-                    component: Board_vue_1["default"],
-                    props: { archive: true }
                 }
             ]
         },

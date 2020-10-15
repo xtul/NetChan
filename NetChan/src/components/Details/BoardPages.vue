@@ -2,7 +2,10 @@
 	<v-row>
 		<v-col cols="12" class="box-container">
 			<div class="box">
-				<span v-if="pageCount != null">
+				<span v-if="$route.params.page === 'archive'">
+					<a class="misclink-nopad" v-on:click="$router.go(-1)">Return</a>
+				</span>	
+				<span v-else-if="pageCount != null">
 					<span v-for="page in pageCount" :key="page">
 						[<span v-if="page === currentPage" class="current">{{page}}</span>					
 						<a v-else :href="'/' + currentBoard + '/' + page">{{page}}</a>]
@@ -12,12 +15,12 @@
 					</span>
 					<router-link v-if="$route.name === 'board-list'" class="misclink" :to="{ name: 'board' }">Default</router-link>
 					<router-link v-if="$route.name === 'board'" class="misclink" :to="{ name: 'board-list' }">List</router-link>
-					<a class="misclink" :href="'/' + currentBoard + '/archive'">Archive</a>
+					<router-link class="misclink" :to="{ name: 'board-archive' }">Archive</router-link>
 				</span>
 				<span v-else>
 					<router-link v-if="$route.name === 'board-list'" class="misclink-mode" :to="{ name: 'board' }">Default</router-link>
 					<router-link v-if="$route.name === 'board'" class="misclink-mode" :to="{ name: 'board-list' }">List</router-link>
-					<a class="misclink-archive" :href="'/' + currentBoard + '/archive'">Archive</a>
+					<router-link class="misclink-archive" :to="{ name: 'board-archive' }">Archive</router-link>
 				</span>				
 			</div>
 		</v-col>
@@ -48,7 +51,7 @@
 		border-right: 1px solid #bce6f5;
 	}
 
-	.misclink, .misclink-mode, .misclink-archive {
+	.misclink, .misclink-mode, .misclink-archive, .misclink-nopad {
 		display:inline-block;
 		height:100%;
 	}

@@ -42,6 +42,12 @@ export default new Router({
 			props: { list: true }
 		},
 		{
+			path: '/:board/archive',
+			name: 'board-archive',
+			component: Board,
+			props: { archive: true }
+		},
+		{
 			path: '/:board',
 			name: 'board',
 			component: Board,
@@ -50,13 +56,7 @@ export default new Router({
 					path: ':page',
 					name: 'board-page',
 					component: Board
-				},
-				{
-					path: '/archive',
-					name: 'board-archive',
-					component: Board,
-					props: { archive: true }
-				}				
+				}			
 			]
 		},
 		{
