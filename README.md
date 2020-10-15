@@ -12,6 +12,7 @@ NetChan uses Vue.js 2 as a display layer and Vue CLI as a server.
 ### Currently available
  - Reading boards and their pages, threads
  - "Classic" board view
+ - "List" board view *(no images, only subjects, last post date etc.)*
  - Quoting *(greentext)*
  - Viewing user-posted images and their thumbnails
  - Frontpage with a board list, welcome info and news
@@ -21,11 +22,7 @@ NetChan uses Vue.js 2 as a display layer and Vue CLI as a server.
  - Your posts are automatically marked
  - Manual and automatic thread updating
 
-### Partially done
- - Catalog view *(will be replaced by thread list view)*
-
 ### To do
- - Thread list view *(no images, only subjects, last post etc.)*
  - Togglable sound effect on new posts
  - Text formatting for higher level posters *(moderators, administrators - needs IS4 in API first)*
  - Basic BBCode-like text formatting for everyone *(such as \[spoiler], \[code])*
