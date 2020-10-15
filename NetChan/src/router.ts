@@ -36,6 +36,12 @@ export default new Router({
 			}
 		},
 		{
+			path: '/:board/list',
+			name: 'board-list',
+			component: Board,
+			props: { list: true }
+		},
+		{
 			path: '/:board',
 			name: 'board',
 			component: Board,
@@ -50,13 +56,7 @@ export default new Router({
 					name: 'board-archive',
 					component: Board,
 					props: { archive: true }
-				},
-				{
-					path: '/catalog',
-					name: 'board-catalog',
-					component: Board,
-					props: { catalog: true }
-				},
+				}				
 			]
 		},
 		{

@@ -7,6 +7,7 @@ $greentext: #789922;
 
 $primary: #00ADEF;
 $primary-pale: lighten($primary, 38%);
+$primary-dark: darken($primary, 18%);
 $green: #72ac2f;
 $red: #d00;
 
@@ -100,6 +101,11 @@ p {
 
 .subject {
 	color: $green;
+	font-weight: 450;
+}
+
+.subject-primary {
+	color: $primary-dark;
 	font-weight: 450;
 }
 
@@ -310,4 +316,28 @@ figcaption {
 
 .you {
 	border-left: 6px solid $response-l;
+}
+
+.anon, .admin {
+	font-weight:bold;
+}
+
+.anon {
+	color: $green;
+}
+
+.admin {
+	color: $red;
+}
+
+.thread-list tr:hover {
+	cursor:pointer;
+}
+
+.theme--light.v-data-table, th {
+	background-color:rgba(0,0,0,0) !important;
+}
+
+.theme--light.v-data-table tr:hover {
+	background-color:$primary-pale !important;
 }

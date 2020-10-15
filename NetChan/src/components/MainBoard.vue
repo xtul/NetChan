@@ -10,10 +10,10 @@
 					<p class="small" style="text-align:center;">All content posted by users is their responsibility.</p>
 					<hr />
 				</v-col>
-				<template v-if="mode === 'catalog' || mode === 'archive'">
+				<template v-if="mode === 'archive'">
 					<v-col cols="12">
 						<div v-if="boardData.pageData" class="nav">
-							[<a :href="'/' + boardData.pageData.board">Return</a>]
+							[<router-link :to="{ name: 'board' }">Return</router-link>]
 						</div>
 					</v-col>
 				</template>
@@ -23,17 +23,14 @@
 				<v-col cols="12">
 					<hr style="margin:0;" />
 				</v-col>
-				<v-col cols="12" v-if="mode === 'catalog'">
-					<BoardCatalogMode ref="boardMode" :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
+				<v-col cols="12" v-if="list === true">
+					<BoardListMode ref="boardMode" :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
 				</v-col>
 				<v-col cols="12" v-else>
 					<BoardDefaultMode ref="boardMode" :boardData="boardData" :boardName="boardName" :shortBoard="this.params.board" />
 				</v-col>
 			</v-row>
 		</v-container>
-		<template v-if="mode !== 'catalog' && mode !== 'archive'">
-			<BoardPages v-if="boardData.pageData" :pageCount="boardData.pageData.pageCount" :currentPage="boardData.pageData.currentPage" :currentBoard="params.board" />
-		</template>
 		<BoardHeader />
 	</v-container>
 </template>
@@ -41,7 +38,7 @@
 <script>
 	import BoardPages from '@/components/Details/BoardPages.vue';
 	import BoardDefaultMode from '@/components/BoardModes/BoardDefaultMode.vue';
-	import BoardCatalogMode from '@/components/BoardModes/BoardCatalogMode.vue';
+	import BoardListMode from '@/components/BoardModes/BoardListMode.vue';
 	import router from '../router';
 	import axios from 'axios';
 	import moment from 'moment';
@@ -51,9 +48,9 @@
 		components: {
 			BoardPages,
 			BoardDefaultMode,
-			BoardCatalogMode
+			BoardListMode
 		},
-		props: ['params', 'catalog', 'archive', 'boardName', 'boardExists', 'boardData'],
+		props: ['params', 'list', 'archive', 'boardName', 'boardExists', 'boardData'],
 		computed: {
 			mode: () => {
 				return router.currentRoute.fullPath.split('/')[2];

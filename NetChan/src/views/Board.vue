@@ -9,6 +9,8 @@
 			:boardName="boardName"
 			:boardExists="boardExists"
 			:boardData="boardData"
+			:list="list"
+			:archive="archive"
 		/>
 		<NotFound v-else :message="errorMsg"/>
 	</div>
@@ -31,6 +33,7 @@
 				loading: true
 			};
 		},
+		props: ['list', 'archive'],
 		components: {
 			MainBoard,
 			NotFound
@@ -75,16 +78,29 @@
 				if (page === undefined) {
 					page = '1';
 				}
-				await axios
-					.get(apiUrl + this.$route.params.board + '/' + page)
-					.then((response) => {
-						if (response.status === 404) {
-							this.boardData = {};
-						} else {
-							this.boardData = response.data;
-						}
-					})
-					.catch();
+				if (this.list === true) {
+					await axios
+						.get(apiUrl + this.$route.params.board + '/list')
+						.then((response) => {
+							if (response.status === 404) {
+								this.boardData = {};
+							} else {
+								this.boardData = response.data;
+							}
+						})
+						.catch();
+				} else {
+					await axios
+						.get(apiUrl + this.$route.params.board + '/' + page)
+						.then((response) => {
+							if (response.status === 404) {
+								this.boardData = {};
+							} else {
+								this.boardData = response.data;
+							}
+						})
+						.catch();
+				}
 
 				this.loading = false;
 			}

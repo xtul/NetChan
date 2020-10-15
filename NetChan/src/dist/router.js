@@ -36,6 +36,12 @@ exports["default"] = new vue_router_1["default"]({
             }
         },
         {
+            path: '/:board/list',
+            name: 'board-list',
+            component: Board_vue_1["default"],
+            props: { list: true }
+        },
+        {
             path: '/:board',
             name: 'board',
             component: Board_vue_1["default"],
@@ -50,13 +56,7 @@ exports["default"] = new vue_router_1["default"]({
                     name: 'board-archive',
                     component: Board_vue_1["default"],
                     props: { archive: true }
-                },
-                {
-                    path: '/catalog',
-                    name: 'board-catalog',
-                    component: Board_vue_1["default"],
-                    props: { catalog: true }
-                },
+                }
             ]
         },
         {

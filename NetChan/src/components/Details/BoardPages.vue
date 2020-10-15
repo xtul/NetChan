@@ -2,15 +2,23 @@
 	<v-row>
 		<v-col cols="12" class="box-container">
 			<div class="box">
-				<template v-for="page in pageCount">
-					[<span v-if="page === currentPage" class="current">{{page}}</span>					
-					<a v-else :href="'/' + currentBoard + '/' + page">{{page}}</a>]
-				</template>
-				<template v-for="(n, index) in 10 - pageCount">
-					<span class="unavailable">[{{n + pageCount}}]</span>
-				</template>
-				<a class="misclink" :href="'/' + currentBoard + '/catalog'">Catalog</a>
-				<a class="misclink" :href="'/' + currentBoard + '/archive'">Archive</a>
+				<span v-if="pageCount != null">
+					<span v-for="page in pageCount" :key="page">
+						[<span v-if="page === currentPage" class="current">{{page}}</span>					
+						<a v-else :href="'/' + currentBoard + '/' + page">{{page}}</a>]
+					</span>
+					<span v-for="n in 10 - pageCount" :key="n">
+						<span class="unavailable">[{{n + pageCount}}]</span>
+					</span>
+					<router-link v-if="$route.name === 'board-list'" class="misclink" :to="{ name: 'board' }">Default</router-link>
+					<router-link v-if="$route.name === 'board'" class="misclink" :to="{ name: 'board-list' }">List</router-link>
+					<a class="misclink" :href="'/' + currentBoard + '/archive'">Archive</a>
+				</span>
+				<span v-else>
+					<router-link v-if="$route.name === 'board-list'" class="misclink-mode" :to="{ name: 'board' }">Default</router-link>
+					<router-link v-if="$route.name === 'board'" class="misclink-mode" :to="{ name: 'board-list' }">List</router-link>
+					<a class="misclink-archive" :href="'/' + currentBoard + '/archive'">Archive</a>
+				</span>				
 			</div>
 		</v-col>
 	</v-row>
@@ -19,7 +27,10 @@
 <script>
 	export default {
 		name: 'BoardPages',
-		props: ['pageCount', 'currentPage', 'threadsPerPage', 'currentBoard']
+		props: ['pageCount', 'currentPage', 'threadsPerPage', 'currentBoard'],
+		updated() {
+			console.log(pageCount);
+		}
 	};
 </script>
 
@@ -37,12 +48,24 @@
 		border-right: 1px solid #bce6f5;
 	}
 
-	.misclink {
+	.misclink, .misclink-mode, .misclink-archive {
 		display:inline-block;
-		padding-left: 1rem;
-		margin-left: 1rem;
-		border-left: 1px solid #b0d9e8;
 		height:100%;
+	}
+
+	.misclink {		
+		padding-left: 1rem;
+		border-left: 1px solid #b0d9e8;
+		margin-left: 1rem;
+	}
+
+	.misclink-mode {
+		padding-right: 1rem;
+		border-right: 1px solid #b0d9e8;		
+	}
+
+	.misclink-archive {
+		padding-left: 1rem;	
 	}
 
 	.unavailable {

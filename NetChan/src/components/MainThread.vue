@@ -15,7 +15,7 @@
 			<v-row>
 				<v-col cols="12">
 					<div class="nav">
-						[<router-link :to="{ name: 'board', params: { board: $route.params.board }}">Return</router-link>]
+						[<a v-on:click="$router.go(-1)">Return</a>]
 					</div>
 					<hr />
 				</v-col>
@@ -36,7 +36,7 @@
 					<hr/>
 					<div style="display: flex; justify-content: space-between">
 						<div class="nav" v-if="threadData.posts[0].archived === false">
-							[<router-link :to="{ name: 'board', params: { board: $route.params.board }}">Return</router-link>]&nbsp;
+							[<a v-on:click="$router.go(-1)">Return</a>]&nbsp;
 							[<a ref="updateThread" v-on:click="updateThread">Update</a>]&nbsp;
 							[
 							<div v-on:click="autoUpdate.enabled = !autoUpdate.enabled; toggleTimer()">
@@ -119,7 +119,7 @@
 			PostForm,
 			Post
 		},
-		props: ['catalog', 'archive', 'boardName', 'boardExists', 'threadData'],
+		props: ['list', 'archive', 'boardName', 'boardExists', 'threadData'],
 		async updated() {
 			const replyLinks = document.getElementsByClassName('reply');
 
