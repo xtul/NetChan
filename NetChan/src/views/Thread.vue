@@ -65,7 +65,12 @@
 			if (subject != null) {
 				document.title = '/' + this.$route.params.board + '/' + this.threadData.posts[0].id + ' - ' + this.threadData.posts[0].subject +  ' - NetChan';
 			} else {
-				document.title = '/' + this.$route.params.board + '/' + this.threadData.posts[0].id + ' - NetChan';
+				const content = this.threadData.posts[0].content;
+				var excerpt = content.substring(0, 32);
+				if (content.length > 32) {
+					excerpt += '...';
+				}
+				document.title = '/' + this.$route.params.board + '/' + this.threadData.posts[0].id + ' - ' + excerpt + ' - NetChan';
 			}
 
 			this.loading = false;

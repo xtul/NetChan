@@ -38,7 +38,15 @@
 									label="Subject" dense></v-text-field>
 					</v-col>
 
-					<v-col cols="5" lg="4" md="12" sm="12">
+					<v-col v-if="mode === 'thread'" cols="5" lg="4" md="12" sm="12">
+						<v-text-field :counter="64"
+									type="password"
+									placeholder="<empty>"
+									v-model="form.password"
+									label="Password" dense></v-text-field>
+					</v-col>
+
+					<v-col v-else cols="12">
 						<v-text-field :counter="64"
 									type="password"
 									placeholder="<empty>"

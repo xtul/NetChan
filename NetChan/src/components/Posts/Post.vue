@@ -1,11 +1,11 @@
-<template>
+a<template>
 	<div>
 		<div class="filename">
 			<template v-if="post.image != null">
 				<template v-if="$route.name !== 'thread'">
 					<v-icon v-if="mode === 'op' && hidden === false" v-on:click="hideThread(post.id)" small dense>mdi-close-thick</v-icon>
 					<v-icon v-if="mode === 'op' && hidden === true" v-on:click="hideThread(post.id)" small dense>mdi-hospital</v-icon>
-					<span>&nbsp;|&nbsp;</span>
+					<span v-if="mode === 'op'">&nbsp;|&nbsp;</span>
 				</template>
 				<a v-if="hidden === false" target="_blank" rel="noopener noreferrer" :href="post.image" :title="getFilename(post.image)">{{ getFilename(post.image) | truncate(16) }}</a>
 			</template>
@@ -49,14 +49,15 @@
 			</p>
 			<span class="content">
 				<div class="content" v-for="(line, index) in cleanup(post.content)" :key="index">
-					<template v-if="line.startsWith('>>>')">
-						<span class="board-link">{{line}}</span>
-					</template>
-					<template v-else-if="line.includes('>>')">
+					<template v-if="line.includes('>>')">
 						<span v-for="(x, index) in regexReply(line)" :key="index">
-							<a v-if="x.startsWith('>>')" class="reply" v-on:mouseleave="linkLeave(x)" v-on:mouseover="linkHover(x)" v-on:click="navigateToPost(x)">
+							<a v-if="x.startsWith('>>>')" class="reply" v-on:click="navigateToBoard(x)">
 								{{x}}
 							</a>
+							<a v-else-if="x.startsWith('>>')" class="reply" v-on:mouseleave="linkLeave(x)" v-on:mouseover="linkHover(x)" v-on:click="navigateToPost(x)">
+								{{x}}
+							</a>
+
 							<span v-else>
 								{{x}}
 							</span>
@@ -246,9 +247,14 @@
 				// window.location.hash = '#post-' + id;
 				router.push({ hash: '#post-' + id });
 			},
-			async lookupThread(postId) {
+			async lookupThread(postId, board = null) {
+				if (board == null) {
+					board = this.board;
+				}
+				console.log(postId);
+				console.log(board);
 				const result = await axios
-					.get(this.$getAPIUrl() + this.board + '/post/' + postId + '/thread')
+					.get(this.$getAPIUrl() + board + '/post/' + postId + '/thread')
 					.then((response) => {
 						return response.data.threadId;
 					})
@@ -258,7 +264,7 @@
 
 				return result;
 			},
-			async navigateToPost(postId,) {
+			async navigateToPost(postId) {
 				postId = postId.replace( /\D+/g, '');
 				const post = document.getElementById('post-' + postId);
 
@@ -282,6 +288,23 @@
 					return;
 				}
 				this.scrollToPost(postId);
+			},
+			async navigateToBoard(postId) {
+				const board = postId.replace( /\W+/g, '').replace( /\d+/g, '');
+				var post = '0';
+				try {
+					post = /\d+/g.exec(postId).find(o => true);
+				} catch {}
+				
+				if (post !== '0') {
+					const postThread = await this.lookupThread(post, board);
+					if (postThread !== false) {
+						router.push({ name: 'thread', params: { threadId: postThread }, hash: '#post-' + postId });
+						return;
+					}
+				} else {
+					router.push({ name: 'board', params: { board: board } });
+				}
 			},
 			getFilename(path) {
 				const pathSplit = path.split('\\');
