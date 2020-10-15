@@ -6,7 +6,7 @@ NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) projec
 
 # Technology
 
-NetChan uses Vue.js 2 as a display layer and Webpack as a server.
+NetChan uses Vue.js 2 as a display layer and Vue CLI as a server.
 
 # Features
 ### Currently available
