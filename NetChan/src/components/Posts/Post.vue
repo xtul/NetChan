@@ -151,7 +151,7 @@ a<template>
 					return;
 				}
 
-				let cleanImgSrc = img.src.replace(window.location.origin, '').replaceAll('/', '\\');
+				let cleanImgSrc = img.src.replace(window.location.origin, '');
 				if (cleanImgSrc === fullUrl) {
 					img.src = thumbUrl;
 				} else {
