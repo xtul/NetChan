@@ -16,7 +16,7 @@ exports.boilerplate = {
                 return 'http://localhost:5934/api/';
             }
             else {
-                return location.origin.substring(0, location.origin.length - 6) + '/api/';
+                return location.origin + '/api/';
             }
         },
         $sleep: function (ms) {

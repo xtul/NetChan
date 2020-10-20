@@ -21,5 +21,6 @@ new vue_1["default"]({
     vuetify: vuetify_1["default"],
     router: router_1["default"],
     store: index_1["default"],
+    // @ts-ignore
     render: function (h) { return h(App_vue_1["default"]); }
 }).$mount('#app');

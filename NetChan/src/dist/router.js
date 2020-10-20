@@ -7,6 +7,7 @@ var Board_vue_1 = require("./views/Board.vue");
 var Thread_vue_1 = require("./views/Thread.vue");
 var ReportForm_vue_1 = require("./components/Forms/ReportForm.vue");
 vue_1["default"].use(vue_router_1["default"]);
+// @ts-ignore
 exports["default"] = new vue_router_1["default"]({
     mode: 'history',
     base: process.env.BASE_URL,

@@ -307,7 +307,11 @@ a<template>
 				}
 			},
 			getFilename(path) {
-				const pathSplit = path.split('\\');
+				var pathSplit = path.split('\\');
+				// windows splits path differently than linux
+				if (pathSplit.length === 1) {
+					pathSplit = path.split('/');
+				}
 				return pathSplit[pathSplit.length - 1]
 			},
 			reply(postId) {

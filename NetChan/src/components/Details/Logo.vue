@@ -1,7 +1,7 @@
 <template>
 	<v-layout column align-center>
 		<router-link :to="{ name: 'home' }">
-			<img src="@/assets/logo.png" class="logo" />
+			<img src="/img/logo.png" class="logo" />
 		</router-link>
 	</v-layout>
 </template>
