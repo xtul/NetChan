@@ -2,7 +2,7 @@
 
 # What is NetChan
 
-NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) project - an anonymous forum where registration is not required. It is a website that will be publicly available once this project covers all of NetBoard's functionality. Same as NetBoard, it is a work-in-progress and many things are subject to change.
+NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) project - an anonymous forum where registration is not required. A live version is available on [https://netchan.nl/](https://netchan.nl/). Same as NetBoard, it is a work-in-progress and many things are subject to change.
 
 # Technology
 
