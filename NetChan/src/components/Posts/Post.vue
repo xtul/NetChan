@@ -133,7 +133,7 @@ a<template>
 				return formattedDate.format('D/M/YYYY (ddd) HH:mm:ss') + ' (' + moment(formattedDate).fromNow() + ')';
 			},
 			cleanup: (str) => {
-				return str.replace(/(\r\n|\r|\n){2,}/g, '$1\n').split('\n');
+				return str.replaceAll('\r', '').replaceAll(/(\r\n|\r|\n){2,}/g, '$1\n').split('\n');
 			},
 			getThumbnailUri: (uri) => {
 				if (uri == null) {

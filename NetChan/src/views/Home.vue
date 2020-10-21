@@ -1,36 +1,38 @@
 <template>
-	<v-container fluid>
+	<v-container>
 		<Logo />
-		<v-layout column align-center>
-			<v-row>
-				<v-col cols="12">
-					<v-card class="rounded-0">
-						<v-card-title>Welcome to NetChan</v-card-title>
-						<v-card-text>
-							<FrontpageInfo type="about" />
-						</v-card-text>
-					</v-card>
-				</v-col>
-				<v-col cols="8">
-					<v-card class="rounded-0">
-						<v-card-title>Boards</v-card-title>
-						<v-card-text>
-							<div>
-								<BoardList/>
-							</div>
-						</v-card-text>
-					</v-card>
-				</v-col>
-				<v-col cols="4">
-					<v-card class="rounded-0">
-						<v-card-title>News</v-card-title>
-						<v-card-text>
-							<FrontpageInfo type="news" />
-						</v-card-text>
-					</v-card>
-				</v-col>
-			</v-row>
-		</v-layout>
+		<v-row justify="center">
+			<v-col cols="12" xl="8">
+				<v-row>
+					<v-col cols="12">
+						<v-card class="rounded-0">
+							<v-card-title>Welcome to NetChan</v-card-title>
+							<v-card-text>
+								<FrontpageInfo type="about" />
+							</v-card-text>
+						</v-card>
+					</v-col>
+					<v-col cols="12" md="8">
+						<v-card class="rounded-0">
+							<v-card-title>Boards</v-card-title>
+							<v-card-text>
+								<div>
+									<BoardList/>
+								</div>
+							</v-card-text>
+						</v-card>
+					</v-col>
+					<v-col cols="12" md="4">
+						<v-card class="rounded-0">
+							<v-card-title>News</v-card-title>
+							<v-card-text>
+								<FrontpageInfo type="news" />
+							</v-card-text>
+						</v-card>
+					</v-col>
+				</v-row>
+			</v-col>
+		</v-row>		
 	</v-container>
 </template>
 
