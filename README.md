@@ -4,6 +4,8 @@
 
 NetChan is a frontend for my [NetBoard](https://github.com/xtul/NetBoard) project - an anonymous forum where registration is not required. A live version is available on [https://netchan.nl/](https://netchan.nl/). Same as NetBoard, it is a work-in-progress and many things are subject to change.
 
+Note: Both NetBoard and NetChan are currently undergoing major changes, with redesigns or complete rewrites of certain features.
+
 # Technology
 
 NetChan uses Vue.js 2 as a display layer and Vue CLI as a server.
